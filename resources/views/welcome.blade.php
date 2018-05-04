@@ -81,7 +81,9 @@
                 <div class="title m-b-md">
                     ReserveAhora.com
                 </div>
-                </div>
+
+                >
+            </div>
         </div>
     </body>
 </html>
