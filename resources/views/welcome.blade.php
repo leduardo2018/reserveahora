@@ -79,10 +79,8 @@
 
             <div class="content">
                 <div class="title m-b-md">
-                    ReserveAhora.com
+                    ReserveAhora.com from master
                 </div>
-
-                >
             </div>
         </div>
     </body>
