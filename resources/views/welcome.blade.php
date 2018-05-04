@@ -82,7 +82,7 @@
                     ReserveAhora.com desde QA
                 </div>
 
-                >
+                
             </div>
         </div>
     </body>
