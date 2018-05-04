@@ -79,7 +79,7 @@
 
             <div class="content">
                 <div class="title m-b-md">
-                    ReserveAhora.com
+                    ReserveAhora.com desde QA
                 </div>
 
                 >
