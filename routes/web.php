@@ -16,4 +16,9 @@ Route::get('/', function () {
 });
 
 Route::get('/scraping', 'ScrapingController@example');
+Route::get('/scrapinghotel', 'Scraps\BookingScrapperController@scrapSearchByhotel');
 
+
+Auth::routes();
+
+Route::get('/home', 'HomeController@index')->name('home');
