@@ -41,24 +41,24 @@ class BookingScrapperController extends Controller
             $crawl->setHeader('Accept-Language','en-us,en;q=0.5' );
             $crawl->setHeader('Pragma','');
             $data = array(
-                            'label'     =>  'gen173nr-1DCAsoMkINc3VpdGVzLXJlY3Jlb0gKWARoMogBAZgBCsIBA3gxMcgBDNgBA-gBAfgBA5ICAXmoAgM',
-                            'city' => $var['destiny']['idcity'],
-                            'checkin_monthday'  =>      substr($var['checkin'], 8,2)  ,
-                            'checkin_month'     =>      substr($var['checkin'], 5,2),
-                            'checkin_year'      =>      substr($var['checkin'], 0,4),
-                            'checkout_monthday' =>      substr($var['checkout'], 8,2),
-                            'checkout_month'    =>      substr($var['checkout'], 5,2),
-                            'checkout_year'     =>      substr($var['checkout'], 0,4),
-                            'group_adults'      =>      ($var['adult']['quantity'] != null ? $var['adult']['quantity'] : 0 ),
-                            'group_children'    =>      ($var['child']['quantity'] != null ? $var['child']['quantity'] : 0),
-                            'no_rooms'          =>      ($var['destiny']['idcity']  !=  null ? $var['destiny']['idcity'] : 0),
-                            'ss_raw'            =>      $var['destiny']['city'],
-                            'ac_position'       =>      0,
-                            'ac_langcode'       =>      'es',
-                            'dest_id'           =>      $var['destiny']['idcity'],
-                            'dest_type'         =>      $var['destiny']['type'],
-                            'search_selected'   =>      'true',
-                    );
+                'label'     =>  'gen173nr-1DCAsoMkINc3VpdGVzLXJlY3Jlb0gKWARoMogBAZgBCsIBA3gxMcgBDNgBA-gBAfgBA5ICAXmoAgM',
+                'city' => $var['destiny']['idcity'],
+                'checkin_monthday'  =>      substr($var['checkin'], 8,2)  ,
+                'checkin_month'     =>      substr($var['checkin'], 5,2),
+                'checkin_year'      =>      substr($var['checkin'], 0,4),
+                'checkout_monthday' =>      substr($var['checkout'], 8,2),
+                'checkout_month'    =>      substr($var['checkout'], 5,2),
+                'checkout_year'     =>      substr($var['checkout'], 0,4),
+                'group_adults'      =>      ($var['adult']['quantity'] != null ? $var['adult']['quantity'] : 0 ),
+                'group_children'    =>      ($var['child']['quantity'] != null ? $var['child']['quantity'] : 0),
+                'no_rooms'          =>      ($var['destiny']['idcity']  !=  null ? $var['destiny']['idcity'] : 0),
+                'ss_raw'            =>      $var['destiny']['city'],
+                'ac_position'       =>      0,
+                'ac_langcode'       =>      'es',
+                'dest_id'           =>      $var['destiny']['idcity'],
+                'dest_type'         =>      $var['destiny']['type'],
+                'search_selected'   =>      'true',
+            );
 
             $crawler = $crawl->request('GET', $url.$endpoint.http_build_query($data), [
                 'stream' => true,
@@ -78,9 +78,12 @@ class BookingScrapperController extends Controller
                 $nodescount = $crawler->filter( '.hotellist_wrap  .sr_item')->count() ;
                 if($nodescount > 0){
                     try{
-                    $crawler->filter( '.hotellist_wrap  .sr_item')
-                             ->each( function ( $node ) {
+                        $crawler->filter( '.hotellist_wrap  .sr_item')
+                        ->each( function ( $node ) {
                             if(!empty($node)){
+
+                                
+                                                                  
 
                                 $cname = $node->filter( '.sr-hotel__name' )->count();
                                 if($cname != '0'){
@@ -98,6 +101,24 @@ class BookingScrapperController extends Controller
 
                                 $hotelid = $node->filter('.sr_item')->attr('data-hotelid');
 
+
+                                 $clink = $node->filter( '.sr_item_photo_link' )->count();
+                                if($clink != '0'){
+                                    $link =$node->filter( '.sr_item_photo_link')->extract(array('href') ) ;
+                                }else{
+                                    $link = "";
+                                }
+
+                                 $cimage = $node->filter( '.hotel_image' )->count();
+                                if($cimage != '0'){
+                                    $image =$node->filter( '.hotel_image')->extract(array('src') ) ;
+                                }else{
+                                    $image = "";
+                                }
+
+                                 
+
+
                                 if($name === "" && $price === ""){
                                     $name = "No disponible";
                                     $price = "No disponibile";
@@ -111,7 +132,9 @@ class BookingScrapperController extends Controller
                                     $this->reshotels[] = array(
                                         'id'    =>  $hotelid,
                                         'name'  =>  $name,
-                                        'price' =>  $price
+                                        'price' =>  $price,
+                                        'link' =>  $link,
+                                        'image' => $image
                                     );
                                 }
                             }
@@ -131,6 +154,27 @@ class BookingScrapperController extends Controller
         }
     }
 
+    public function scrapSearchByhotel(Request $request){
+
+            $var = $request->json()->all();
+
+              $url='https://www.booking.com/hotel/co/calle-10-express.es.html?label=gen173nr-1FCAsoMkINc3VpdGVzLXJlY3Jlb0gKWARoMogBAZgBCsIBA3gxMcgBDNgBAegBAfgBA5ICAXmoAgM;sid=bc3e43896557080384f6fc1969225d5e;all_sr_blocks=176446704_109834274_0_0_0;bshb=2;checkin=2018-05-07;checkout=2018-05-24;dest_id=-592318;dest_type=city;dist=0;dotd_fb=1;group_adults=2;group_children=0;hapos=1;highlighted_blocks=176446704_109834274_0_0_0;hpos=1;no_rooms=1;room1=A%2CA;sb_price_type=total;srepoch=1525731828;srfid=60dcc3547c69412b7d90f061a11dff5d730297f7X1;srpvid=3b4e9d79a8fd02d9;type=total;ucfs=1&#hotelTmpl/';
+
+            $crawl = new Client();
+            $guzzleClient = new GuzzleClient(array(
+                'timeout' => 600,
+            ));
+            $crawl->setClient($guzzleClient);
+
+            $crawler = $crawl->request('GET',$url, [
+                'stream' => true,
+                'read_timeout' => 100,
+            ]);
+
+            dd($crawler);
+
+    }
+
     // /**
     //  * Function to scrap by hotel
     //  * 
@@ -141,7 +185,7 @@ class BookingScrapperController extends Controller
     //         $url = 'https://www.expedia.com/Hotel-Search?destination=Medellin%2C+Colombia&latLong=6.234093%2C-75.592979&regionId=2246&startDate=02%2F24%2F2018&endDate=02%2F25%2F2018&_xpid=11905%7C1&adults=2&children=0';
     //         $endpoint   =
     //         $crawl = new Client();
-           
+
     //         $crawler = $crawl->request('GET', $url );
     //         //var_dump($crawler);
     //        $res =  array();
@@ -152,7 +196,7 @@ class BookingScrapperController extends Controller
     //                       dump($node->text());
     //                       $this->res[$index] =  $node->text();
     //                      }); 
-        
+
     //        return response($this->res);
     //     } catch(\Exception $e){
     //         return response()->json($e);
@@ -210,4 +254,4 @@ class BookingScrapperController extends Controller
     //     }
     // }
 
- }
+}
