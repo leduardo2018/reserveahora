@@ -73,7 +73,9 @@ class BookingScrapperController extends Controller
             for ($i = 0; $i < 3; $i++) {
                 if ( $i != 0 ) {
                     $p = $i * 15;
-                    $crawler = $crawl->request('GET', $url.$endpoint.http_build_query($data).'&rows=15&offset='.$p,['stream' => true,'read_timeout' => 100,]);
+                    $crawler = $crawl->request('GET', $url.$endpoint.http_build_query($data).'&rows=15&offset='.$p,
+                        ['stream' => true,
+                        'read_timeout' => 100,]);
                 }
 
                 $nodescount = $crawler->filter( '.hotellist_wrap .sr_item')->count();
@@ -155,152 +157,281 @@ class BookingScrapperController extends Controller
         }
     }
 
-    public function scrapSearchByhotel(Request $request)
- {
-        
-           // $var = $request->json()->all();
 
+    public function scrapSearchByhotel(Request $request)
+       {
+       // try{
+            $var = $request->json()->all();
             $url = 'https://www.booking.com/hotel/co/47-medellin-street.es.html?';
-          
+           
+
             $crawl = new Client();
             $guzzleClient = new GuzzleClient(array(
                 'timeout' => 600,
             ));
-
             $crawl->setClient($guzzleClient);
-           
+
+            
             $crawler = $crawl->request('GET', $url, [
                 'stream' => true,
                 'read_timeout' => 100,
             ]);
+                   //Scrap de el nombre del hotel
+             $titulo_Hotel =      $crawler->filter('.hp__hotel-name')->text();
+             var_dump($titulo_Hotel);
+            // //Scrap de la direccion completa del hotel
+             $direccion_hotel =   $crawler->filter('.hp_address_subtitle')->text();  
+             var_dump($direccion_hotel);  
+            // //scrap de la descripcion completa.    
+          
+                 // $crawler->filter('.#summary')
+                 //        ->each(function($nodedescription){
+
+                 //                $listado_descripcion = $nodedescription->text();
+
+                 //               var_dump($listado_descripcion);
+                 //        });
+
+
+             // $descripcion_hotel1 = $crawler->filter('#summary')->children()->eq(1)->text();
+             // $descripcion_hotel2 = $crawler->filter('#summary')->children()->eq(2)->text();
+             // $descripcion_hotel3 = $crawler->filter('#summary')->children()->eq(3)->text();
+             // $descripcion_hotel4 = $crawler->filter('#summary')->children()->eq(4)->text();
+             // $descripcion_hotel5 = $crawler->filter('#summary')->children()->eq(5)->text();
+
+             // var_dump($descripcion_hotel4);
+             // echo "<br>";
+            // $descripcion_hotel2, $descripcion_hotel3, $descripcion_hotel4, $descripcion_hotel5);
+             //scrap de los servicios 
+             $servicios_hotel = $crawler->filter('.hp_desc_important_facilities')->text();
+            
+             var_dump($servicios_hotel);
+
+             $nodescount = $crawler->filter( '#hp_availability_style_changes .description tbody')->count();
+
+                if($nodescount > 0){
+
+                 
+                      
+                    //try{
+                       $crawler->filter('#hp_availability_style_changes .description tbody')
+                        ->each( function ( $node ) {
+                            if(!empty($node)){
+
+                                                        
+                            $node->filter('.room-info')->filter('a')
+                        ->each(function($noderooms){
+
+                                $listado_noderroms = $noderooms->text();
+
+                               var_dump($listado_noderroms);
+                        });
+
+                         // ->each(function ($node2){
+
+                          //var_dump($name0);
+                          // });
+                          // $name1 = $node->filter('tbody ')->filter('.room-info')->filter('a')->eq(1)->text();
+                          // $name2 = $node->filter('tbody ')->filter('.room-info')->filter('a')->eq(2)->text();
+                          // $name3 = $node->filter('tbody ')->filter('.room-info')->filter('a')->eq(3)->text();
+                          // $name4 = $node->filter('tbody ')->filter('.room-info')->filter('a')->eq(4)->text();
+                          // $name5 = $node->filter('tbody ')->filter('.room-info')->filter('a')->eq(5)->text();
+                          // $name6 = $node->filter('tbody ')->filter('.room-info')->filter('a')->eq(6)->text();
+
+
+                          //        echo $name0;
+                          //        echo "<br>";
+                          //        echo $name1;
+                          //        echo "<br>";
+                          //         echo $name2;
+                          //        echo "<br>";
+                          //        echo $name3;
+                          //        echo "<br>";
+                          //          echo $name4;
+                          //        echo "<br>";
+                          //        echo $name5;
+                          //         echo "<br>";
+                          //        echo $name6;
+                              
+                                 
+                                //  // dd($cname);
+                                // if($cname != '0'){
+                                //     $name ="si hay nodos";
+                                //     // $name = trim( preg_replace( '/[^;\sa-zA-Z0-9áéíóúüñÁÉÍÓÚÜÑ]+/u', ' ', $node->filter( '.hprt-roomtype-icon-link' )->text() ) );
+                                // }else{
+                                //     $name = "no hay nodos";
+                                // }
+
+
+                                //  if(!in_array($name, $this->reshotels)){
+                                //     $this->reshotels[] = array(
+                                //         'name'  =>  $name
+                                      
+                                //     );
+                                // }
+
+                            
+                            }
+                        });
+                   // }catch(\Exception $e){
+                     //   return response()->json($e);
+                   // }
+                }else{
+                    return response()->json("No existen nodos");
+                }
+            
+        //     $result =  HelpersController::super_unique($this->reshotels, 'name');
+        //     return response(array('scrapped'=>$result));
+        //           }  catch(\Exception $e){
+        //     return  $e;
+         
+    }
+
+ // {
+        
+ //           // $var = $request->json()->all();
+
+ //            $url = 'https://www.booking.com/hotel/co/47-medellin-street.es.html?';
+          
+ //            $crawl = new Client();
+ //            $guzzleClient = new GuzzleClient(array(
+ //                'timeout' => 600,
+ //            ));
+
+ //            $crawl->setClient($guzzleClient);
+           
+ //            $crawler = $crawl->request('GET', $url, [
+ //                'stream' => true,
+ //                'read_timeout' => 100,
+ //            ]);
 
            
 
-                                 //Scrap de el nombre del hotel
-            // $titulo_Hotel =      $crawler->filter('.hp__hotel-name')->text();
-            // //Scrap de la direccion completa del hotel
-            // $direccion_hotel =   $crawler->filter('.hp_address_subtitle')->text();    
-            // //scrap de la descripcion completa.    
+ //                                 //Scrap de el nombre del hotel
+ //            // $titulo_Hotel =      $crawler->filter('.hp__hotel-name')->text();
+ //            // //Scrap de la direccion completa del hotel
+ //            // $direccion_hotel =   $crawler->filter('.hp_address_subtitle')->text();    
+ //            // //scrap de la descripcion completa.    
           
-            // $descripcion_hotel1 = $crawler->filter('#summary')->children()->eq(1)->text();
-            // $descripcion_hotel2 = $crawler->filter('#summary')->children()->eq(2)->text();
-            // $descripcion_hotel3 = $crawler->filter('#summary')->children()->eq(3)->text();
-            // $descripcion_hotel4 = $crawler->filter('#summary')->children()->eq(4)->text();
-            // $descripcion_hotel5 = $crawler->filter('#summary')->children()->eq(5)->text();
-            // //scrap de los servicios 
-            // $servicios_hotel = $crawler->filter('.hp_desc_important_facilities')->text();
+ //            // $descripcion_hotel1 = $crawler->filter('#summary')->children()->eq(1)->text();
+ //            // $descripcion_hotel2 = $crawler->filter('#summary')->children()->eq(2)->text();
+ //            // $descripcion_hotel3 = $crawler->filter('#summary')->children()->eq(3)->text();
+ //            // $descripcion_hotel4 = $crawler->filter('#summary')->children()->eq(4)->text();
+ //            // $descripcion_hotel5 = $crawler->filter('#summary')->children()->eq(5)->text();
+ //            // //scrap de los servicios 
+ //            // $servicios_hotel = $crawler->filter('.hp_desc_important_facilities')->text();
 
                         
-            $form = $crawler->filter('#hp_availability_style_changes .description #available_rooms .roomArea #hprt-form .hprt-table')->count();
+ //            $form = $crawler->filter('#hp_availability_style_changes .description #available_rooms .roomArea #hprt-form .hprt-table')->count();
 
-            dd($form);
-             // if($form > 0){
+ //            dd($form);
+ //             // if($form > 0){
 
-             //           return response()->json("Si existen nodos table td");
+ //             //           return response()->json("Si existen nodos table td");
 
-             //           } else{
+ //             //           } else{
 
-             //        return response()->json("No existen nodos table td");
-             //           } 
+ //             //        return response()->json("No existen nodos table td");
+ //             //           } 
 
-            //->children()->filter('div');
+ //            //->children()->filter('div');
             
 
-           // ->children()->filter('thead')->children()->filter('tr')->children()->filter('th')->text();
+ //           // ->children()->filter('thead')->children()->filter('tr')->children()->filter('th')->text();
          
-        // $nodescount = $crawler->filter('table')->children()->filter('tbody')->count();
+ //        // $nodescount = $crawler->filter('table')->children()->filter('tbody')->count();
 
 
-        // //->children()->filter('tr')->children()->filter('td')->children()->filter('div')
-        //          if($nodescount > 0){
+ //        // //->children()->filter('tr')->children()->filter('td')->children()->filter('div')
+ //        //          if($nodescount > 0){
 
 
-        //              $nodescount2 =$crawler->filter('tr')->count();
-        //              if($nodescount2 > 0){
+ //        //              $nodescount2 =$crawler->filter('tr')->count();
+ //        //              if($nodescount2 > 0){
 
                        
-        //                  $nodescount3 =$crawler->filter('td')->count();
-        //                    if($nodescount3 > 0){
+ //        //                  $nodescount3 =$crawler->filter('td')->count();
+ //        //                    if($nodescount3 > 0){
 
 
-        //                return response()->json("Si existen nodos td");
+ //        //                return response()->json("Si existen nodos td");
 
-        //                } else{
+ //        //                } else{
 
-        //             return response()->json("No existen nodos td");
-        //                } 
-
-
-
-        //                return response()->json("Si existen nodos tr");
-
-        //                } else{
-
-        //             return response()->json("No existen nodos tr");
-        //                }
+ //        //             return response()->json("No existen nodos td");
+ //        //                } 
 
 
-        //               // $cname = $node->filter( '.sr-hotel__name' )->count();
-        //               //     if($cname != '0'){
-        //               //        $name = trim( preg_replace( '/[^;\sa-zA-Z0-9áéíóúüñÁÉÍÓÚÜÑ]+/u', ' ', $node->filter( '.sr-hotel__name' )->text() ) );
-        //               //           }else{
-        //               //               $name = "";
-        //               //           }
+
+ //        //                return response()->json("Si existen nodos tr");
+
+ //        //                } else{
+
+ //        //             return response()->json("No existen nodos tr");
+ //        //                }
 
 
-        //               echo response()->json("Si existen nodos tbody");
+ //        //               // $cname = $node->filter( '.sr-hotel__name' )->count();
+ //        //               //     if($cname != '0'){
+ //        //               //        $name = trim( preg_replace( '/[^;\sa-zA-Z0-9áéíóúüñÁÉÍÓÚÜÑ]+/u', ' ', $node->filter( '.sr-hotel__name' )->text() ) );
+ //        //               //           }else{
+ //        //               //               $name = "";
+ //        //               //           }
 
 
-        //                } else{
-        //             return response()->json("No existen nodos tbody");
-        //         }
-             //                    $ctipodecama = $node->filter( '.hprt-roomtype-icon-link' )->count();
-             //                    if($ctipodecama != '0'){
-             //                        $tipodecama = $node->filter( '.hprt-roomtype-icon-link')->text();
-             //                    }else{
-             //                        $tipodecama = "";
+ //        //               echo response()->json("Si existen nodos tbody");
+
+
+ //        //                } else{
+ //        //             return response()->json("No existen nodos tbody");
+ //        //         }
+ //             //                    $ctipodecama = $node->filter( '.hprt-roomtype-icon-link' )->count();
+ //             //                    if($ctipodecama != '0'){
+ //             //                        $tipodecama = $node->filter( '.hprt-roomtype-icon-link')->text();
+ //             //                    }else{
+ //             //                        $tipodecama = "";
 
    
-            // //scrap del tipo de habitacion          
-            //$tipos_habitaciones = $crawler->filter('.hprt-table-cell-roomtype')->children()->filter('.hprt-roomtype-icon-link')->text();
+ //            // //scrap del tipo de habitacion          
+ //            //$tipos_habitaciones = $crawler->filter('.hprt-table-cell-roomtype')->children()->filter('.hprt-roomtype-icon-link')->text();
 
-           // $a= $crawler->filter('.hprt-table-cell-roomtype')->children()->eq(2)->text();
+ //           // $a= $crawler->filter('.hprt-table-cell-roomtype')->children()->eq(2)->text();
 
  
               
-              //$link->text());
+ //              //$link->text());
                
           
-          //   echo($titulo_Hotel);
-          //   echo "<br>";
-          //   echo "<br>";
-          //   echo($direccion_hotel);
-          //   echo "<br>";
-          //   echo "<br>";
-          //   echo($descripcion_hotel1);
-          //   echo "<br>";
-          //   echo "<br>";
-          //   echo($descripcion_hotel2);
-          //   echo "<br>";
-          //   echo "<br>";
-          //   echo($descripcion_hotel3);
-          //    echo "<br>";
-          //   echo "<br>";
-          //   echo($descripcion_hotel4);
-          //   echo "<br>";
-          //   echo "<br>";
-          //   echo($descripcion_hotel5);
-          //   echo "<br>";
-          //   echo "<br>";
-          //   echo($servicios_hotel);
-          //   echo "<br>";
-          //   echo "<br>";
-          // // var_dump($a);
+ //          //   echo($titulo_Hotel);
+ //          //   echo "<br>";
+ //          //   echo "<br>";
+ //          //   echo($direccion_hotel);
+ //          //   echo "<br>";
+ //          //   echo "<br>";
+ //          //   echo($descripcion_hotel1);
+ //          //   echo "<br>";
+ //          //   echo "<br>";
+ //          //   echo($descripcion_hotel2);
+ //          //   echo "<br>";
+ //          //   echo "<br>";
+ //          //   echo($descripcion_hotel3);
+ //          //    echo "<br>";
+ //          //   echo "<br>";
+ //          //   echo($descripcion_hotel4);
+ //          //   echo "<br>";
+ //          //   echo "<br>";
+ //          //   echo($descripcion_hotel5);
+ //          //   echo "<br>";
+ //          //   echo "<br>";
+ //          //   echo($servicios_hotel);
+ //          //   echo "<br>";
+ //          //   echo "<br>";
+ //          // // var_dump($a);
           
            
            
 
-    }
+ //    }
 
     // /**
     //  * Function to scrap by hotel
