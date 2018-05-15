@@ -1,7 +1,8 @@
 <?php
 
+use App\City;
 use Illuminate\Http\Request;
-
+use Illuminate\Support\Facades\Input;
 /*
 |--------------------------------------------------------------------------
 | API Routes
@@ -23,6 +24,12 @@ Route::group(['prefix'=>'v1', 'middleware'=>'cors'],function(){
 
     Route::post('/scrap',           'Scraps\BookingScrapperController@scrapSearchByCityAndDate');
      Route::get('/scraphotel',           'Scraps\BookingScrapperController@scrapSearchByhotel');
+     Route::get('/cities', function(){
+            $querystring = Input::get('queryString');
+            $cities = City::where('city', 'like', '%'.$querystring.'%')->get();
+            return response()->json($cities);
+
+     });
 
    // Route::get('/getbookingcities', 'Scraps\BookingScrapperController@getCityDestinationsInfo');
     //Route::get('/getbookingcitiesdestinies', 'DataSources\BookingDataSourcesController@getAllBookingCitiesDestinies');
