@@ -194,7 +194,8 @@ class BookingScrapperController extends Controller
                      
                var_dump($descripcion_hotel0);
                echo "<br>";
-               echo "<br>";           
+               echo "<br>";
+            
              
            
              //scrap de los servicios 
@@ -207,10 +208,7 @@ class BookingScrapperController extends Controller
              $nodescount = $crawler->filter( '#hp_availability_style_changes .description tbody')->count();
 
                 if($nodescount > 0){
-
-                 
-                      
-                try{
+                    //try{
                        $crawler->filter('#hp_availability_style_changes .description tbody')
                         ->each( function ( $node ) {
                             if(!empty($node)){
@@ -223,34 +221,31 @@ class BookingScrapperController extends Controller
 
                                var_dump($listado_noderroms);
                                echo "<br>";
-                             
                         });
-
-                       
-                              
-                                 
-                                //  // dd($cname);
-                                // if($cname != '0'){
-                                //     $name ="si hay nodos";
-                                //     // $name = trim( preg_replace( '/[^;\sa-zA-Z0-9áéíóúüñÁÉÍÓÚÜÑ]+/u', ' ', $node->filter( '.hprt-roomtype-icon-link' )->text() ) );
-                                // }else{
-                                //     $name = "no hay nodos";
-                                // }
-
-
-                                //  if(!in_array($name, $this->reshotels)){
-                                //     $this->reshotels[] = array(
-                                //         'name'  =>  $name
-                                      
-                                //     );
-                                // }
-
-                            
+                                                      
                             }
                         });
-                    }catch(\Exception $e){
-                        return response()->json($e);
-                 }
+
+
+                          $crawler->filter('#hp_availability_style_changes .description tbody')
+                        ->each( function ( $nodedisponibility ) {
+                            if(!empty($nodedisponibility)){
+
+                                                        
+                         $nodedisponibility->filter('.hprt-occupancy-occupancy-info')
+                         ->each(function($noderooms2){
+
+                                $listado_disponibilidad = $noderooms2->text();
+
+                                var_dump($listado_disponibilidad);
+                                echo "scraping disponibilidad";
+                         });
+                                                      
+                            }
+                        });
+                   // }catch(\Exception $e){
+                     //   return response()->json($e);
+                   // }
                 }else{
                     return response()->json("No existen nodos");
                 }
