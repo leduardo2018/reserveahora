@@ -23,21 +23,23 @@ class BookingScrapperController extends Controller
      */
     public function scrapSearchByCityAndDate(Request $request)
     {
-        try{
-            $var = $request->json()->all();
-            $url    =   'https://www.booking.com/';
-            $endpoint   =   'searchresults.es.html?';
+                   try{
+                      $var = $request->json()->all();
 
-            $crawl = new Client();
-            $guzzleClient = new GuzzleClient(array(
-                'timeout' => 600,
-            ));
-            $crawl->setClient($guzzleClient);
+                      
+                         $url    =   'https://www.booking.com/';
+                          $endpoint   =   'searchresults.es.html?';
 
-            $crawl->setHeader('Accept', '*/*');
-            $crawl->setHeader('Cache-Control', 'max-age=0');
-            $crawl->setHeader('Connection', 'keep-alive');
-            $crawl->setHeader('Keep-Alive', '600');
+                       $crawl = new Client();
+                       $guzzleClient = new GuzzleClient(array(
+                            'timeout' => 600,
+                           ));
+                         $crawl->setClient($guzzleClient);
+
+                         $crawl->setHeader('Accept', '*/*');
+                            $crawl->setHeader('Cache-Control', 'max-age=0');
+                                $crawl->setHeader('Connection', 'keep-alive');
+                             $crawl->setHeader('Keep-Alive', '600');
             $crawl->setHeader('Accept-Charset','ISO-8859-1,utf-8;q=0.7,*;q=0.7' );
             $crawl->setHeader('Accept-Language','en-us,en;q=0.5' );
             $crawl->setHeader('Pragma','');
@@ -66,6 +68,8 @@ class BookingScrapperController extends Controller
                 'read_timeout' => 100,
             ]);
 
+          
+
             $pages = preg_replace( '/[^A-Za-z0-9\-]/', '', ($crawler->filter('.results-paging .x-list li')->count() > 0)
                 ? $crawler->filter('.results-paging .x-list li:nth-last-child(2)')->text()
                 : 0);
@@ -85,8 +89,8 @@ class BookingScrapperController extends Controller
                         ->each( function ( $node ) {
                             if(!empty($node)){
 
-                                
-                                                                  
+
+
 
                                 $cname = $node->filter( '.sr-hotel__name' )->count();
                                 if($cname != '0'){
@@ -105,21 +109,21 @@ class BookingScrapperController extends Controller
                                 $hotelid = $node->filter('.sr_item')->attr('data-hotelid');
 
 
-                                 $clink = $node->filter( '.sr_item_photo_link' )->count();
+                                $clink = $node->filter( '.sr_item_photo_link' )->count();
                                 if($clink != '0'){
                                     $link =$node->filter( '.sr_item_photo_link')->extract(array('href') ) ;
                                 }else{
                                     $link = "";
                                 }
 
-                                 $cimage = $node->filter( '.hotel_image' )->count();
+                                $cimage = $node->filter( '.hotel_image' )->count();
                                 if($cimage != '0'){
                                     $image =$node->filter( '.hotel_image')->extract(array('src') ) ;
                                 }else{
                                     $image = "";
                                 }
 
-                                 
+
 
 
                                 if($name === "" && $price === ""){
@@ -152,7 +156,7 @@ class BookingScrapperController extends Controller
             }
             $result =  HelpersController::super_unique($this->reshotels, 'name');
             return response(array('scrapped'=>$result));
-                  }  catch(\Exception $e){
+        }  catch(\Exception $e){
             return  $e;
         }
     }
@@ -160,129 +164,185 @@ class BookingScrapperController extends Controller
 
 
     public function scrapSearchByhotel(Request $request)
-       {
+    {
        // try{
-            $var = $request->json()->all();
-            $url = 'https://www.booking.com/hotel/co/premiun-real-medellin.es.html?label=gen173nr-1FCAsoMkINc3VpdGVzLXJlY3Jlb0gKWARoMogBAZgBCsIBA3gxMcgBDNgBAegBAfgBA5ICAXmoAgM;sid=bc3e43896557080384f6fc1969225d5e;all_sr_blocks=35938501_97976537_0_1_0;bshb=2;checkin=2018-05-18;checkout=2018-05-19;dest_id=-592318;dest_type=city;dist=0;group_adults=2;group_children=0;hapos=18;highlighted_blocks=35938501_97976537_0_1_0;hpos=18;no_rooms=1;room1=A%2CA;sb_price_type=total;srepoch=1526411707;srfid=92740d00b7c4d42040a03158585c7afbc6587cc3X18;srpvid=c473875c3a1a00db;type=total;ucfs=1&#hotelTmpl';
-           
+        $var = $request->json()->all();
 
-            $crawl = new Client();
-            $guzzleClient = new GuzzleClient(array(
-                'timeout' => 600,
-            ));
-            $crawl->setClient($guzzleClient);
+     
+         $url = 'https://www.booking.com/hotel/co/las-rosas-boutique.es.html?label=gen173nr-1FCAsoMkINc3VpdGVzLXJlY3Jlb0gKWARoMogBAZgBCsIBA3gxMcgBDNgBAegBAfgBA5ICAXmoAgM;sid=bc3e43896557080384f6fc1969225d5e;all_sr_blocks=25695604_104537968_0_1_0;bshb=2;checkin=2018-05-18;checkout=2018-05-19;dest_id=-592318;dest_type=city;dist=0;group_adults=2;hapos=1;highlighted_blocks=25695604_104537968_0_1_0;hpos=1;room1=A%2CA;sb_price_type=total;srepoch=1526651659;srfid=71bf6a91b135be00320e4d1b84c41db3c55cd0fdX1;srpvid=c47361c46b32024f;type=total;ucfs=1&#hotelTmpl';
 
-            
-            $crawler = $crawl->request('GET', $url, [
-                'stream' => true,
-                'read_timeout' => 100,
-            ]);
+
+        $crawl = new Client();
+        $guzzleClient = new GuzzleClient(array(
+            'timeout' => 600,
+        ));
+        $crawl->setClient($guzzleClient);
+
+        $crawl->setHeader('Accept', '*/*');
+        $crawl->setHeader('Cache-Control', 'max-age=0');
+        $crawl->setHeader('Connection', 'keep-alive');
+        $crawl->setHeader('Keep-Alive', '600');
+        $crawl->setHeader('Accept-Charset','ISO-8859-1,utf-8;q=0.7,*;q=0.7' );
+        $crawl->setHeader('Accept-Language','en-us,en;q=0.5' );
+        $crawl->setHeader('Pragma','');
+
+
+        $crawler = $crawl->request('GET', $url, [
+            'stream' => true,
+            'read_timeout' => 100,
+        ]);
+
+
                    //Scrap de el nombre del hotel
-             $titulo_Hotel =      $crawler->filter('.hp__hotel-name')->text();
-             var_dump($titulo_Hotel);
-             echo "<br>";
-             echo "<br>";
+        $titulo_Hotel =      $crawler->filter('.hp__hotel-name')->text();
+        var_dump($titulo_Hotel);
+        echo "<br>";
+        echo "<br>";
 
             // //Scrap de la direccion completa del hotel
-             $direccion_hotel =   $crawler->filter('.hp_address_subtitle')->text();  
-             var_dump($direccion_hotel); 
-              echo "<br>"; 
-              echo "<br>";
+        $direccion_hotel =   $crawler->filter('.hp_address_subtitle')->text();  
+        var_dump($direccion_hotel); 
+        echo "<br>"; 
+        echo "<br>";
 
             // //scrap de la descripcion completa.    
-             $descripcion_hotel0 = $crawler->filter('#summary')->text();
-                     
-               var_dump($descripcion_hotel0);
-               echo "<br>";
-               echo "<br>";
-            
-             
-           
+        $descripcion_hotel0 = $crawler->filter('#summary')->text();
+
+        var_dump($descripcion_hotel0);
+        echo "<br>";
+        echo "<br>";
+
+
+
              //scrap de los servicios 
-             $servicios_hotel = $crawler->filter('.hp_desc_important_facilities')->text();
-            
-             var_dump($servicios_hotel);
-             echo "<br>";
-             echo "<br>";
+        $servicios_hotel = $crawler->filter('.hp_desc_important_facilities')->text();
 
-             $nodescount = $crawler->filter( '#hp_availability_style_changes .description tbody')->count();
+        var_dump($servicios_hotel);
+        echo "<br>";
+        echo "<br>";
 
-                if($nodescount > 0){
+
+
+
+
+        // $nodescount = $crawler->filter( '#hp_availability_style_changes .description tbody')->count();
+
+        // if($nodescount > 0){
                     //try{
-                       $crawler->filter('#hp_availability_style_changes .description tbody')
-                        ->each( function ( $node ) {
-                            if(!empty($node)){
-
-                                                        
-                            $node->filter('.room-info')->filter('a')
-                        ->each(function($noderooms){
-
-                                $listado_noderroms = $noderooms->text();
-
-                               var_dump($listado_noderroms);
-                               echo "<br>";
-                        });
-                                                      
-                            }
-                        });
+         // $crawler->filter('#hp_availability_style_changes .description tbody')
+         // ->each( function ( $node ) {
+         //    if(!empty($node)){
 
 
-                          $crawler->filter('#hp_availability_style_changes .description tbody')
-                        ->each( function ( $nodedisponibility ) {
-                            if(!empty($nodedisponibility)){
+         //        $node->filter('.room-info')->filter('a')
+         //        ->each(function($noderooms){
 
-                                                        
-                         $nodedisponibility->filter('.hprt-occupancy-occupancy-info')
-                         ->each(function($noderooms2){
+         //            $listado_noderroms = $noderooms->text();
 
-                                $listado_disponibilidad = $noderooms2->text();
+         //            var_dump($listado_noderroms);
+         //            echo "<br>";
 
-                                var_dump($listado_disponibilidad);
-                                echo "scraping disponibilidad";
-                         });
-                                                      
-                            }
-                        });
-                   // }catch(\Exception $e){
-                     //   return response()->json($e);
-                   // }
-                }else{
-                    return response()->json("No existen nodos");
-                }
+         //        });
+
+
+         //     //    $node->filter('.room-info')->filter('i')->filter('.bicon')
+         //     //    ->each(function($noderooms2){
+
+         //     //       $listado_noderroms2 = $noderooms2->count();
+
+         //     //       var_dump($listado_noderroms2);
+         //     //       echo "<br>";
+
+         //     //   });
+
+
+         //     //    $node->filter('.room-info')
+         //     //    ->each(function($noderooms3){
+
+         //     //                    //  $listado_noderroms3 = $noderooms3->html();
+
+         //     //                    // var_dump($listado_noderroms3);
+         //     //     echo "Imprime esta monda";
+         //     //     echo "<br>";
+
+         //     // });
+
+                  // }
+
+
+        // });
+
+
+           $crawler->filter('#hp_availability_style_changes .description table tbody ')
+               ->each( function ( $node4 ) {    
+              
+                      $listado_noderroms4 = $node4->html();
+                        
+                        var_dump($listado_noderroms4);
+                        echo "<br>";
             
+                         });
+
+
+         // $crawler->filter('#hp_availability_style_changes .description tbody')
+         // ->each( function ( $nodedisponibility ) {
+         //    if(!empty($nodedisponibility)){
+
+
+         //       $nodedisponibility->filter('tr')->filter('td')->filter('td')
+         //       ->each(function($noderooms2){
+
+         //           $listado_disponibilidad = $noderooms2->html();
+         //                         // echo "Imprime esta monda";
+         //                         // echo "<br>";
+         //           var_dump($listado_disponibilidad);
+         //                          // var_dump($noderooms2->text());
+
+
+         //            });
+
+         //          }
+         //             });
+         //           // }catch(\Exception $e){
+         //             //   return response()->json($e);
+         //           // }
+         //         }else{
+         //            return response()->json("No existen nodos");
+         //        }
+
         //     $result =  HelpersController::super_unique($this->reshotels, 'name');
         //     return response(array('scrapped'=>$result));
         //           }  catch(\Exception $e){
         //     return  $e;
-         
+          //}
     }
 
  // {
-        
+
  //           // $var = $request->json()->all();
 
  //            $url = 'https://www.booking.com/hotel/co/47-medellin-street.es.html?';
-          
+
  //            $crawl = new Client();
  //            $guzzleClient = new GuzzleClient(array(
  //                'timeout' => 600,
  //            ));
 
  //            $crawl->setClient($guzzleClient);
-           
+
  //            $crawler = $crawl->request('GET', $url, [
  //                'stream' => true,
  //                'read_timeout' => 100,
  //            ]);
 
-           
+
 
  //                                 //Scrap de el nombre del hotel
  //            // $titulo_Hotel =      $crawler->filter('.hp__hotel-name')->text();
  //            // //Scrap de la direccion completa del hotel
  //            // $direccion_hotel =   $crawler->filter('.hp_address_subtitle')->text();    
  //            // //scrap de la descripcion completa.    
-          
+
  //            // $descripcion_hotel1 = $crawler->filter('#summary')->children()->eq(1)->text();
  //            // $descripcion_hotel2 = $crawler->filter('#summary')->children()->eq(2)->text();
  //            // $descripcion_hotel3 = $crawler->filter('#summary')->children()->eq(3)->text();
@@ -291,7 +351,7 @@ class BookingScrapperController extends Controller
  //            // //scrap de los servicios 
  //            // $servicios_hotel = $crawler->filter('.hp_desc_important_facilities')->text();
 
-                        
+
  //            $form = $crawler->filter('#hp_availability_style_changes .description #available_rooms .roomArea #hprt-form .hprt-table')->count();
 
  //            dd($form);
@@ -305,10 +365,10 @@ class BookingScrapperController extends Controller
  //             //           } 
 
  //            //->children()->filter('div');
-            
+
 
  //           // ->children()->filter('thead')->children()->filter('tr')->children()->filter('th')->text();
-         
+
  //        // $nodescount = $crawler->filter('table')->children()->filter('tbody')->count();
 
 
@@ -319,7 +379,7 @@ class BookingScrapperController extends Controller
  //        //              $nodescount2 =$crawler->filter('tr')->count();
  //        //              if($nodescount2 > 0){
 
-                       
+
  //        //                  $nodescount3 =$crawler->filter('td')->count();
  //        //                    if($nodescount3 > 0){
 
@@ -361,17 +421,17 @@ class BookingScrapperController extends Controller
  //             //                    }else{
  //             //                        $tipodecama = "";
 
-   
+
  //            // //scrap del tipo de habitacion          
  //            //$tipos_habitaciones = $crawler->filter('.hprt-table-cell-roomtype')->children()->filter('.hprt-roomtype-icon-link')->text();
 
  //           // $a= $crawler->filter('.hprt-table-cell-roomtype')->children()->eq(2)->text();
 
- 
-              
+
+
  //              //$link->text());
-               
-          
+
+
  //          //   echo($titulo_Hotel);
  //          //   echo "<br>";
  //          //   echo "<br>";
@@ -397,9 +457,9 @@ class BookingScrapperController extends Controller
  //          //   echo "<br>";
  //          //   echo "<br>";
  //          // // var_dump($a);
-          
-           
-           
+
+
+
 
  //    }
 
