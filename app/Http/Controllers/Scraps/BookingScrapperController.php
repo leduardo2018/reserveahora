@@ -74,7 +74,7 @@ class BookingScrapperController extends Controller
                 ? $crawler->filter('.results-paging .x-list li:nth-last-child(2)')->text()
                 : 0);
 
-            for ($i = 0; $i < 3; $i++) {
+            for ($i = 0; $i <1; $i++) {
                 if ( $i != 0 ) {
                     $p = $i * 15;
                     $crawler = $crawl->request('GET', $url.$endpoint.http_build_query($data).'&rows=15&offset='.$p,
@@ -170,7 +170,7 @@ class BookingScrapperController extends Controller
         $var = $request->json()->all();
 
      
-         $url = 'https://www.booking.com/hotel/co/altamar-cartagena.es.html?label=gen173nr-1DCAEoggJCAlhYSDNYBGgyiAEBmAEKuAEGyAEM2AED6AEBkgIBeagCAw;sid=bc3e43896557080384f6fc1969225d5e;all_sr_blocks=27699803_101112910_0_1_0;bshb=2;checkin=2018-05-25;checkout=2018-05-26;dest_id=-579943;dest_type=city;dist=0;group_adults=2;hapos=1;highlighted_blocks=27699803_101112910_0_1_0;hpos=1;room1=A%2CA;sb_price_type=total;srepoch=1526912134;srfid=fe22ca56580c31d062bd7f91d6e142589000f611X1;srpvid=af0c6442dfc8002e;type=total;ucfs=1&#hotelTmpl';
+         $url = 'https://www.booking.com/hotel/co/altamar-cartagena.es.html?label=gen173nr-1DCAEoggJCAlhYSDNYBGgyiAEBmAEKuAEGyAEM2AED6AEBkgIBeagCAw;sid=bc3e43896557080384f6fc1969225d5e;all_sr_blocks=27699803_101112910_0_1_0;bshb=2;checkin=2018-05-25;checkout=2018-05-26;dest_id=-579943;dest_type=city;dist=0;group_adults=2;hapos=1;highlighted_blocks=27699803_101112910_0_1_0;hpos=1;room1=A%2CA;sb_price_type=total;srepoch=1526917394;srfid=bcd74ed801a51b932b3d8d0f98a45c5edb765e2aX1;srpvid=a7096e88d65e011c;type=total;ucfs=1&#hotelTmpl';
 
 
         $crawl = new Client();
@@ -199,6 +199,23 @@ class BookingScrapperController extends Controller
         var_dump($titulo_Hotel);
         echo "<br>";
         echo "<br>";
+
+
+
+                    //Scrap de la imagenes del hotel
+    
+
+        $cimagenes_hotel = $crawler->filter( '#photos_distinct' )->count();
+                 if($cimagenes_hotel != '0'){
+                  $imagenes_hotel= $crawler->filter( '#photos_distinct')->children('a')->extract(array('href') ) ;  
+                  var_dump($imagenes_hotel);
+                  echo "<br>"; 
+                  echo "<br>";
+                   }else{
+                   $imagenes_hotel = "";
+                  }
+
+
 
             // //Scrap de la direccion completa del hotel
         $direccion_hotel =   $crawler->filter('.hp_address_subtitle')->text();  
@@ -230,7 +247,7 @@ class BookingScrapperController extends Controller
         if($nodescount2 > 0){
 
 
-        
+
 
         //             // try{
          $crawler->filter('#hp_availability_style_changes .description table tbody ')
