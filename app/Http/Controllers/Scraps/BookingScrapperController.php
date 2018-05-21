@@ -154,6 +154,7 @@ class BookingScrapperController extends Controller
                     return response()->json("No existen nodos");
                 }
             }
+
             $result =  HelpersController::super_unique($this->reshotels, 'name');
             return response(array('scrapped'=>$result));
         }  catch(\Exception $e){
@@ -169,7 +170,7 @@ class BookingScrapperController extends Controller
         $var = $request->json()->all();
 
      
-         $url = 'https://www.booking.com/hotel/co/las-rosas-boutique.es.html?label=gen173nr-1FCAsoMkINc3VpdGVzLXJlY3Jlb0gKWARoMogBAZgBCsIBA3gxMcgBDNgBAegBAfgBA5ICAXmoAgM;sid=bc3e43896557080384f6fc1969225d5e;all_sr_blocks=25695604_104537968_0_1_0;bshb=2;checkin=2018-05-18;checkout=2018-05-19;dest_id=-592318;dest_type=city;dist=0;group_adults=2;hapos=1;highlighted_blocks=25695604_104537968_0_1_0;hpos=1;room1=A%2CA;sb_price_type=total;srepoch=1526651659;srfid=71bf6a91b135be00320e4d1b84c41db3c55cd0fdX1;srpvid=c47361c46b32024f;type=total;ucfs=1&#hotelTmpl';
+         $url = 'https://www.booking.com/hotel/co/47-medellin-street.es.html?label=gen173nr-1DCAEoggJCAlhYSDNYBGgyiAEBmAEKuAEGyAEM2AED6AEBkgIBeagCAw;sid=bc3e43896557080384f6fc1969225d5e;all_sr_blocks=109232001_95778841_0_1_0%2C109232001_95778841_0_1_0%2C109232001_95778841_0_1_0%2C109232001_95778841_0_1_0%2C109232001_95778841_0_1_0%2C109232001_95778841_0_1_0%2C109232001_95778841_0_1_0%2C109232005_95778841_0_1_0%2C109232005_95778841_0_1_0%2C109232005_95778841_0_1_0;checkin=2018-05-25;checkout=2018-05-26;dest_id=-592318;dest_type=city;dist=0;group_adults=10;group_children=0;hapos=6;highlighted_blocks=109232005_95778841_0_1_0%2C109232001_95778841_0_1_0;hpos=6;no_rooms=10;req_adults=10;req_children=0;room1=A;room10=A;room2=A;room3=A;room4=A;room5=A;room6=A;room7=A;room8=A;room9=A;sb_price_type=total;srepoch=1526677513;srfid=a8e5140f70c4d9bc1e8c2b45141d74f0389482ccX6;srpvid=d86894432d930098;type=total;ucfs=1&#hotelTmpl';
 
 
         $crawl = new Client();
@@ -225,63 +226,90 @@ class BookingScrapperController extends Controller
 
 
 
-        // $nodescount = $crawler->filter( '#hp_availability_style_changes .description tbody')->count();
-
-        // if($nodescount > 0){
-                    //try{
-         // $crawler->filter('#hp_availability_style_changes .description tbody')
-         // ->each( function ( $node ) {
-         //    if(!empty($node)){
+        $nodescount2 = $crawler->filter( '#hp_availability_style_changes .description tbody')->count();
+        if($nodescount2 > 0){
 
 
-         //        $node->filter('.room-info')->filter('a')
-         //        ->each(function($noderooms){
-
-         //            $listado_noderroms = $noderooms->text();
-
-         //            var_dump($listado_noderroms);
-         //            echo "<br>";
-
-         //        });
+                    // try{
+         $crawler->filter('#hp_availability_style_changes .description table tbody ')
+         ->each( function ( $node ) {
+            if(!empty($node)){
 
 
-         //     //    $node->filter('.room-info')->filter('i')->filter('.bicon')
-         //     //    ->each(function($noderooms2){
 
-         //     //       $listado_noderroms2 = $noderooms2->count();
+                $node->filter('tr')->filter('td')->filter('.hprt-roomtype-link')
+                ->each(function($noderooms){
 
-         //     //       var_dump($listado_noderroms2);
-         //     //       echo "<br>";
+                    $listado_noderroms = $noderooms->text();            
 
-         //     //   });
+                    var_dump($listado_noderroms );
+                    echo "<br>";
 
-
-         //     //    $node->filter('.room-info')
-         //     //    ->each(function($noderooms3){
-
-         //     //                    //  $listado_noderroms3 = $noderooms3->html();
-
-         //     //                    // var_dump($listado_noderroms3);
-         //     //     echo "Imprime esta monda";
-         //     //     echo "<br>";
-
-         //     // });
-
-                  // }
+                });
 
 
-        // });
+                $node->filter('tr')->filter('td')->filter('.hprt-occupancy-occupancy-info')->filter('i')
+                ->each(function($noderooms2){
+
+                   $listado_noderroms2 = $noderooms2->count();
+
+                   var_dump($listado_noderroms2);
+                   echo "<br>";
+
+               });
 
 
-           $crawler->filter('#hp_availability_style_changes .description table tbody ')
-               ->each( function ( $node4 ) {    
+                 $node->filter('tr')->filter('td')->filter('.hprt-price-price')
+                ->each(function($noderooms3){
+
+                   $listado_noderroms3 = $noderooms3->text();
+
+                   var_dump($listado_noderroms3);
+                   echo "<br>";
+
+               });
+
+                  $node->filter('tr')->filter('td')->filter('.hprt-conditions')
+                ->each(function($noderooms4){
+
+                   $listado_noderroms4 = $noderooms4->text();
+
+                   var_dump($listado_noderroms4);
+                   echo "<br>";
+
+               });
+
+                  $node->filter('tr')->filter('td')->filter('.hprt-nos-select')
+                ->each(function($noderooms5){
+
+                   $listado_noderroms5 = $noderooms5->text();
+
+                   var_dump($listado_noderroms5);
+                   echo "<br>";
+                   echo "<br>";
+
+               });
+                    
+
+
+
+
+
+                  }
+
+
+        });
+
+
+           // $crawler->filter('#hp_availability_style_changes .description table tbody ')
+           //     ->each( function ( $node4 ) {    
               
-                      $listado_noderroms4 = $node4->html();
+           //            $listado_noderroms4 = $node4->html();
                         
-                        var_dump($listado_noderroms4);
-                        echo "<br>";
+           //              var_dump($listado_noderroms4);
+           //              echo "<br>";
             
-                         });
+           //               });
 
 
          // $crawler->filter('#hp_availability_style_changes .description tbody')
@@ -540,7 +568,7 @@ class BookingScrapperController extends Controller
     //     }catch(\Exception $e){
     //         return $e;
     //     }
-    // }
+     }
 
 
 
