@@ -230,72 +230,72 @@ class BookingScrapperController extends Controller
         if($nodescount2 > 0){
 
 
-        dd('prueba a ver si funciona el heroku');
+        
 
         //             // try{
-        //  $crawler->filter('#hp_availability_style_changes .description table tbody ')
-        //  ->each( function ( $node ) {
-        //     if(!empty($node)){
+         $crawler->filter('#hp_availability_style_changes .description table tbody ')
+         ->each( function ( $node ) {
+            if(!empty($node)){
 
 
 
-        //         $node->filter('tr')->filter('td')->filter('.hprt-roomtype-link')
-        //         ->each(function($noderooms){
+                $node->filter('tr')->filter('td')->filter('.hprt-roomtype-link')
+                ->each(function($noderooms){
 
-        //             $listado_noderroms = $noderooms->text();            
+                    $listado_noderroms = $noderooms->text();            
 
-        //             var_dump($listado_noderroms );
-        //             echo "<br>";
+                    var_dump($listado_noderroms );
+                    echo "<br>";
 
-        //         });
-
-
-        //         $node->filter('tr')->filter('td')->filter('.hprt-occupancy-occupancy-info')->filter('i')
-        //         ->each(function($noderooms2){
-
-        //            $listado_noderroms2 = $noderooms2->count();
-
-        //            var_dump($listado_noderroms2);
-        //            echo "<br>";
-
-        //        });
+                });
 
 
-        //          $node->filter('tr')->filter('td')->filter('.hprt-price-price')
-        //         ->each(function($noderooms3){
+                $node->filter('tr')->filter('td')->filter('.hprt-occupancy-occupancy-info')->filter('i')
+                ->each(function($noderooms2){
 
-        //            $listado_noderroms3 = $noderooms3->text();
+                   $listado_noderroms2 = $noderooms2->count();
 
-        //            var_dump($listado_noderroms3);
-        //            echo "<br>";
+                   var_dump($listado_noderroms2);
+                   echo "<br>";
 
-        //        });
+               });
 
-        //           $node->filter('tr')->filter('td')->filter('.hprt-conditions')
-        //         ->each(function($noderooms4){
 
-        //            $listado_noderroms4 = $noderooms4->text();
+                 $node->filter('tr')->filter('td')->filter('.hprt-price-price')
+                ->each(function($noderooms3){
 
-        //            var_dump($listado_noderroms4);
-        //            echo "<br>";
+                   $listado_noderroms3 = $noderooms3->text();
 
-        //        });
+                   var_dump($listado_noderroms3);
+                   echo "<br>";
 
-        //           $node->filter('tr')->filter('td')->filter('.hprt-nos-select')
-        //         ->each(function($noderooms5){
+               });
 
-        //            $listado_noderroms5 = $noderooms5->text();
+                  $node->filter('tr')->filter('td')->filter('.hprt-conditions')
+                ->each(function($noderooms4){
 
-        //            var_dump($listado_noderroms5);
-        //            echo "<br>";
-        //            echo "<br>";
+                   $listado_noderroms4 = $noderooms4->text();
 
-        //        });
+                   var_dump($listado_noderroms4);
+                   echo "<br>";
+
+               });
+
+                  $node->filter('tr')->filter('td')->filter('.hprt-nos-select')
+                ->each(function($noderooms5){
+
+                   $listado_noderroms5 = $noderooms5->text();
+
+                   var_dump($listado_noderroms5);
+                   echo "<br>";
+                   echo "<br>";
+
+               });
                     
-        //           }
+                  }
 
 
-        // });
+        });
 
 
            
