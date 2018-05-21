@@ -205,10 +205,13 @@ class BookingScrapperController extends Controller
                     //Scrap de la imagenes del hotel
     
 
-        $cimagenes_hotel = $crawler->filter( '#photos_distinct' )->count();
+                 $cimagenes_hotel = $crawler->filter( '#photos_distinct' )->count();
                  if($cimagenes_hotel != '0'){
-                  $imagenes_hotel= $crawler->filter( '#photos_distinct')->children('a')->extract(array('href') ) ;  
-                  var_dump($imagenes_hotel);
+                  $imagenes_hotel= $crawler->filter( '#photos_distinct')->children('a')->extract(array('href') ) ;
+
+                     
+                    var_dump($imagenes_hotel);
+                
                   echo "<br>"; 
                   echo "<br>";
                    }else{
