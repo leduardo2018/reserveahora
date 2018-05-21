@@ -170,7 +170,7 @@ class BookingScrapperController extends Controller
         $var = $request->json()->all();
 
      
-         $url = 'https://www.booking.com/hotel/co/altamar-cartagena.es.html?label=gen173nr-1DCAEoggJCAlhYSDNYBGgyiAEBmAEKuAEGyAEM2AED6AEBkgIBeagCAw;sid=bc3e43896557080384f6fc1969225d5e;all_sr_blocks=27699803_101112910_0_1_0;bshb=2;checkin=2018-05-25;checkout=2018-05-26;dest_id=-579943;dest_type=city;dist=0;group_adults=2;hapos=1;highlighted_blocks=27699803_101112910_0_1_0;hpos=1;room1=A%2CA;sb_price_type=total;srepoch=1526917394;srfid=bcd74ed801a51b932b3d8d0f98a45c5edb765e2aX1;srpvid=a7096e88d65e011c;type=total;ucfs=1&#hotelTmpl';
+         $url = 'https://www.booking.com/hotel/co/costa-del-sol.es.html?label=gen173nr-1DCAEoggJCAlhYSDNYBGgyiAEBmAEKuAEGyAEM2AED6AEBkgIBeagCAw;sid=bc3e43896557080384f6fc1969225d5e;all_sr_blocks=25601602_114532398_0_0_0;bshb=2;checkin=2018-05-25;checkout=2018-05-26;dest_id=-579943;dest_type=city;dist=0;group_adults=2;hapos=5;highlighted_blocks=25601602_114532398_0_0_0;hpos=5;room1=A%2CA;sb_price_type=total;srepoch=1526938221;srfid=c87aad6c610e05a60c9a1c3da56a1a37f2d50ac4X5;srpvid=63a097350844011c;type=total;ucfs=1&#hotelTmpl';
 
 
         $crawl = new Client();
@@ -196,7 +196,7 @@ class BookingScrapperController extends Controller
 
                    //Scrap de el nombre del hotel
         $titulo_Hotel =      $crawler->filter('.hp__hotel-name')->text();
-        var_dump($titulo_Hotel);
+        print_r($titulo_Hotel);
         echo "<br>";
         echo "<br>";
 
@@ -206,11 +206,11 @@ class BookingScrapperController extends Controller
     
 
                  $cimagenes_hotel = $crawler->filter( '#photos_distinct' )->count();
-                 if($cimagenes_hotel != '0'){
+                   if($cimagenes_hotel != '0'){
                   $imagenes_hotel= $crawler->filter( '#photos_distinct')->children('a')->extract(array('href') ) ;
 
                      
-                    var_dump($imagenes_hotel);
+                    print_r($imagenes_hotel);
                 
                   echo "<br>"; 
                   echo "<br>";
@@ -222,14 +222,14 @@ class BookingScrapperController extends Controller
 
             // //Scrap de la direccion completa del hotel
         $direccion_hotel =   $crawler->filter('.hp_address_subtitle')->text();  
-        var_dump($direccion_hotel); 
+        print_r($direccion_hotel); 
         echo "<br>"; 
         echo "<br>";
 
             // //scrap de la descripcion completa.    
         $descripcion_hotel0 = $crawler->filter('#summary')->text();
 
-        var_dump($descripcion_hotel0);
+        print_r($descripcion_hotel0);
         echo "<br>";
         echo "<br>";
 
@@ -238,7 +238,7 @@ class BookingScrapperController extends Controller
              //scrap de los servicios 
         $servicios_hotel = $crawler->filter('.hp_desc_important_facilities')->text();
 
-        var_dump($servicios_hotel);
+        print_r($servicios_hotel);
         echo "<br>";
         echo "<br>";
 
@@ -264,7 +264,7 @@ class BookingScrapperController extends Controller
 
                     $listado_noderroms = $noderooms->text();            
 
-                    var_dump($listado_noderroms );
+                    print_r($listado_noderroms );
                     echo "<br>";
 
                 });
@@ -275,7 +275,7 @@ class BookingScrapperController extends Controller
 
                    $listado_noderroms2 = $noderooms2->count();
 
-                   var_dump($listado_noderroms2);
+                   print_r($listado_noderroms2);
                    echo "<br>";
 
                });
@@ -286,7 +286,7 @@ class BookingScrapperController extends Controller
 
                    $listado_noderroms3 = $noderooms3->text();
 
-                   var_dump($listado_noderroms3);
+                   print_r($listado_noderroms3);
                    echo "<br>";
 
                });
@@ -296,7 +296,11 @@ class BookingScrapperController extends Controller
 
                    $listado_noderroms4 = $noderooms4->text();
 
-                   var_dump($listado_noderroms4);
+                   $myoptions = explode('Cancelación', $listado_noderroms4);
+
+                   $misopciones= $myoptions[0];
+
+                   print_r($misopciones);
                    echo "<br>";
 
                });
@@ -306,7 +310,7 @@ class BookingScrapperController extends Controller
 
                    $listado_noderroms5 = $noderooms5->text();
 
-                   var_dump($listado_noderroms5);
+                   print_r($listado_noderroms5);
                    echo "<br>";
                    echo "<br>";
 
