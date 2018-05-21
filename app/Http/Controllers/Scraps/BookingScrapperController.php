@@ -170,7 +170,7 @@ class BookingScrapperController extends Controller
         $var = $request->json()->all();
 
      
-         $url = 'https://www.booking.com/hotel/co/47-medellin-street.es.html?label=gen173nr-1DCAEoggJCAlhYSDNYBGgyiAEBmAEKuAEGyAEM2AED6AEBkgIBeagCAw;sid=bc3e43896557080384f6fc1969225d5e;all_sr_blocks=109232001_95778841_0_1_0%2C109232001_95778841_0_1_0%2C109232001_95778841_0_1_0%2C109232001_95778841_0_1_0%2C109232001_95778841_0_1_0%2C109232001_95778841_0_1_0%2C109232001_95778841_0_1_0%2C109232005_95778841_0_1_0%2C109232005_95778841_0_1_0%2C109232005_95778841_0_1_0;checkin=2018-05-25;checkout=2018-05-26;dest_id=-592318;dest_type=city;dist=0;group_adults=10;group_children=0;hapos=6;highlighted_blocks=109232005_95778841_0_1_0%2C109232001_95778841_0_1_0;hpos=6;no_rooms=10;req_adults=10;req_children=0;room1=A;room10=A;room2=A;room3=A;room4=A;room5=A;room6=A;room7=A;room8=A;room9=A;sb_price_type=total;srepoch=1526677513;srfid=a8e5140f70c4d9bc1e8c2b45141d74f0389482ccX6;srpvid=d86894432d930098;type=total;ucfs=1&#hotelTmpl';
+         $url = 'https://www.booking.com/hotel/co/altamar-cartagena.es.html?label=gen173nr-1DCAEoggJCAlhYSDNYBGgyiAEBmAEKuAEGyAEM2AED6AEBkgIBeagCAw;sid=bc3e43896557080384f6fc1969225d5e;all_sr_blocks=27699803_101112910_0_1_0;bshb=2;checkin=2018-05-25;checkout=2018-05-26;dest_id=-579943;dest_type=city;dist=0;group_adults=2;hapos=1;highlighted_blocks=27699803_101112910_0_1_0;hpos=1;room1=A%2CA;sb_price_type=total;srepoch=1526912134;srfid=fe22ca56580c31d062bd7f91d6e142589000f611X1;srpvid=af0c6442dfc8002e;type=total;ucfs=1&#hotelTmpl';
 
 
         $crawl = new Client();
