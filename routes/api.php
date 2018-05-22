@@ -40,8 +40,8 @@ Route::group(['prefix'=>'v1', 'middleware'=>'cors'],function(){
     //Route::post('/createuser', 'Auth\RegisterController@create');
     //Route::get('/getallusers', 'Users\UsersController@getAllUsers');
 
-    /* Route::get('/scrapbyhotel', 'Scraps\BookingScrapperController@scrapByHotel');
-    Route::get('/scrapphantom', 'Scraps\PhantomjsController@scrapPhantom');
-    Route::get('/searchscrapphantom', 'Scraps\PhantomjsController@scrapPhantomBookingSearch');
-    Route::get('/searchscrapcasper', 'Scraps\CasperjsController@scrapCasper'); */
+     Route::get('/scrapbyhotel', 'Scraps\BookingScrapperController@scrapByHotel');
+    // Route::get('/scrapphantom', 'Scraps\PhantomjsController@scrapPhantom');
+    // Route::get('/searchscrapphantom', 'Scraps\PhantomjsController@scrapPhantomBookingSearch');
+    // Route::get('/searchscrapcasper', 'Scraps\CasperjsController@scrapCasper'); 
 });
