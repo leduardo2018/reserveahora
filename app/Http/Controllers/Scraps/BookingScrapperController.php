@@ -199,7 +199,7 @@ class BookingScrapperController extends Controller
 
 
                  //Scrap de el nombre del hotel
-               $titulo_Hotel = trim( preg_replace( '/[^;\sa-zA-Z0-9áéíóúüñÁÉÍÓÚÜÑ]+/u', ' ',  $crawler->filter('.hp__hotel-name')->text()));
+               $titulo_Hotel = trim( preg_replace( '/[^;\sa-zA-Z0-9áéíóúüñÁÉÍÓÚÜÑ\n]+/u', ' ',  $crawler->filter('.hp__hotel-name')->text()));
              
            
 
