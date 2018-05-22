@@ -16,7 +16,7 @@ class BookingScrapperController extends Controller
 {
 
     private $reshotels = array();
-     private $reshotels2 = array();
+    
 
     /**
      * Function to scrap a general page
@@ -167,14 +167,15 @@ class BookingScrapperController extends Controller
     }
 
 
-
     public function scrapSearchByhotel(Request $request)
     {
        // try{
         $var = $request->json()->all();
 
      
-                 $url = 'https://www.booking.com/hotel/co/ibis-cartagena-marbella.es.html?label=gen173nr-1DCAEoggJCAlhYSDNYBGgyiAEBmAEKuAEGyAEM2AED6AEBkgIBeagCAw;sid=bc3e43896557080384f6fc1969225d5e;checkin=2018-05-25;checkout=2018-05-26;ucfs=1;srpvid=63a097350844011c;srepoch=1526938221;highlighted_blocks=137800403_97261075_0_2_0;all_sr_blocks=137800403_97261075_0_2_0;bshb=2;room1=A%2CA;hpos=6;hapos=6;dest_type=city;dest_id=-579943;srfid=c87aad6c610e05a60c9a1c3da56a1a37f2d50ac4X6;from=searchresults;highlight_room=#hotelTmpl';
+                 // $url = 'https://www.booking.com/hotel/co/ibis-cartagena-marbella.es.html?label=gen173nr-1DCAEoggJCAlhYSDNYBGgyiAEBmAEKuAEGyAEM2AED6AEBkgIBeagCAw;sid=bc3e43896557080384f6fc1969225d5e;checkin=2018-05-25;checkout=2018-05-26;ucfs=1;srpvid=63a097350844011c;srepoch=1526938221;highlighted_blocks=137800403_97261075_0_2_0;all_sr_blocks=137800403_97261075_0_2_0;bshb=2;room1=A%2CA;hpos=6;hapos=6;dest_type=city;dest_id=-579943;srfid=c87aad6c610e05a60c9a1c3da56a1a37f2d50ac4X6;from=searchresults;highlight_room=#hotelTmpl';
+
+                 $url = $var['url'];
 
 
                 $crawl = new Client();
@@ -199,15 +200,13 @@ class BookingScrapperController extends Controller
 
 
                  //Scrap de el nombre del hotel
-               $titulo_Hotel = trim( preg_replace( '/[^;\sa-zA-Z0-9áéíóúüñÁÉÍÓÚÜÑ\n]+/u', ' ',  $crawler->filter('.hp__hotel-name')->text()));
+               $titulo_Hotel = trim( preg_replace( '/[^;\sa-zA-Z0-9áéíóúüñÁÉÍÓÚÜÑ\n]\n+/u', ' ',  $crawler->filter('.hp__hotel-name')->text()));
              
-           
-
-
 
                 //Puntuacion HOtel
-                 $puntuacion_Hotel =   trim( preg_replace( '/[^;\sa-zA-Z0-9áéíóúüñÁÉÍÓÚÜÑ]+/u', ' ',   $crawler->filter('#js--hp-gallery-scorecard')->text()));
-                 $puntuacion= explode('comentarios',$puntuacion_Hotel);
+                 $puntuacion_Hotel =   trim( preg_replace( '/[^;\sa-zA-Z0-9áéíóúüñÁÉÍÓÚÜÑ]\n+/u', ' ',   $crawler->filter('#js--hp-gallery-scorecard')->text()));
+                 $puntuacion2= explode('comentarios',$puntuacion_Hotel);
+                  $puntuacion =preg_replace( '/\n/', ' ',$puntuacion2);
                 
                
                   //Scrap de la imagenes del hotel
@@ -225,21 +224,21 @@ class BookingScrapperController extends Controller
 
 
                         // //Scrap de la direccion completa del hotel
-                    $direccion_hotel = trim( preg_replace( '/[^;\sa-zA-Z0-9áéíóúüñÁÉÍÓÚÜÑ]+/u', ' ', $crawler->filter('.hp_address_subtitle')->text()));  
+                    $direccion_hotel = trim( preg_replace( '/[^;\sa-zA-Z0-9áéíóúüñÁÉÍÓÚÜÑ]\n+/u', ' ', $crawler->filter('.hp_address_subtitle')->text()));  
                 
 
 
                         // //scrap de la descripcion completa.    
-                    $descripcion_hotel0 = trim( preg_replace( '/[^;\sa-zA-Z0-9áéíóúüñÁÉÍÓÚÜÑ]+/u', ' ',$crawler->filter('#summary')->text()));
+                    $descripcion_hotel0 = trim( preg_replace( '/[^;\sa-zA-Z0-9áéíóúüñÁÉÍÓÚÜÑ]\n+/u', ' ',$crawler->filter('#summary')->text()));
                    
 
 
 
                          //scrap de los servicios 
-                    $servicios_hotel =  $crawler->filter('.hp_desc_important_facilities')->filter('div')->text();
+                    $servicios_hotel = preg_replace( '/\n/', ' ', $crawler->filter('.hp_desc_important_facilities')->filter('div')->text());
                     $myexplode = explode('Servicios más populares',$servicios_hotel);
-                    $servicios = trim( preg_replace( '/[^;\sa-zA-Z0-9áéíóúüñÁÉÍÓÚÜÑ]+/u', ' ', $myexplode[1] ));
-
+                    $servicios2 =  $myexplode[1];
+                    $servicios = $servicios2;
                  
                   
 
@@ -252,7 +251,7 @@ class BookingScrapperController extends Controller
                     if($nodescount2 > 0){
 
 
-                     // try{
+                    
                      $crawler->filter('#hp_availability_style_changes .description table tbody ')
                      ->each( function ( $node ) use ($titulo_Hotel, $puntuacion, $direccion_hotel, $descripcion_hotel0,$servicios, $imagenes_hotel) {
                         if(!empty($node)){
@@ -262,11 +261,10 @@ class BookingScrapperController extends Controller
                 $var1 =   $node->filter('tr')->filter('td')->filter('.hprt-roomtype-link')
                     ->each(function($noderooms){
 
-                      $listado_noderroms = $noderooms->text();            
+                      $listado_noderroms = preg_replace( '/\n/', ' ', $noderooms->text());            
 
-                        return $listado_noderroms;
-                       
-                        echo "<br>";
+                        return $listado_noderroms;        
+                        
 
                     });
 
@@ -276,10 +274,10 @@ class BookingScrapperController extends Controller
                    $var2=  $node->filter('tr')->filter('td')->filter('.hprt-occupancy-occupancy-info')->filter('i')
                     ->each(function($noderooms2){
 
-                       $listado_noderroms2 = $noderooms2->count();
+                       $listado_noderroms2 = preg_replace( '/\n/', ' ', $noderooms2->count());
 
                        return $listado_noderroms2;
-                       echo "<br>";
+                      
 
                    });
 
@@ -287,10 +285,10 @@ class BookingScrapperController extends Controller
                    $var3 =   $node->filter('tr')->filter('td')->filter('.hprt-price-price')
                     ->each(function($noderooms3){
 
-                       $listado_noderroms3 = $noderooms3->text();
+                       $listado_noderroms3 =  preg_replace( '/\n/', ' ',$noderooms3->text());
 
                        return $listado_noderroms3;
-                       echo "<br>";
+                       
                    });
 
 
@@ -298,14 +296,14 @@ class BookingScrapperController extends Controller
                   $var4 =     $node->filter('tr')->filter('td')->filter('.hprt-conditions')
                     ->each(function($noderooms4){
 
-                       $listado_noderroms4 = $noderooms4->text();
+                       $listado_noderroms4 = preg_replace( '/\n/', ' ', $noderooms4->text());
 
                        $myoptions = explode('Cancelación', $listado_noderroms4);
 
                        $misopciones= $myoptions[0];
 
                        return $misopciones;
-                       echo "<br>";
+                       
 
                    });
 
@@ -313,11 +311,10 @@ class BookingScrapperController extends Controller
                      $var5 =  $node->filter('tr')->filter('td')->filter('.hprt-nos-select')
                     ->each(function($noderooms5){
 
-                       $listado_noderroms5 = $noderooms5->text();
+                       $listado_noderroms5 =  preg_replace( '/\n/', ' ', $noderooms5->text());
 
                     return $listado_noderroms5;
-                       echo "<br>";
-                       echo "<br>";
+                      
 
                    });
 
@@ -364,33 +361,36 @@ class BookingScrapperController extends Controller
 
      }//End de la funcion
 
+
+
+
     // /**
     //  * Function to scrap by hotel
     //  * 
     //  * @return json object
     //  */
-    public function scrapByHotel(){
-        try{
-            $url = 'https://www.expedia.com/Hotel-Search?destination=Medellin%2C+Colombia&latLong=6.234093%2C-75.592979&regionId=2246&startDate=02%2F24%2F2018&endDate=02%2F25%2F2018&_xpid=11905%7C1&adults=2&children=0';
-            $endpoint   =
-            $crawl = new Client();
+    // public function scrapByHotel(){
+    //     try{
+    //         $url = 'https://www.expedia.com/Hotel-Search?destination=Medellin%2C+Colombia&latLong=6.234093%2C-75.592979&regionId=2246&startDate=02%2F24%2F2018&endDate=02%2F25%2F2018&_xpid=11905%7C1&adults=2&children=0';
+    //         $endpoint   =
+    //         $crawl = new Client();
 
-            $crawler = $crawl->request('GET', $url );
-            //var_dump($crawler);
-           $res =  array();
-           $resarray = array();
-            //$crawler->filter('.sr-hotel__name')
-            $crawler->filter('.hotelTitle')
-                    ->each(function ($node, $index ) {
-                          dump($node->text());
-                          $this->res[$index] =  $node->text();
-                         }); 
+    //         $crawler = $crawl->request('GET', $url );
+    //         //var_dump($crawler);
+    //        $res =  array();
+    //        $resarray = array();
+    //         //$crawler->filter('.sr-hotel__name')
+    //         $crawler->filter('.hotelTitle')
+    //                 ->each(function ($node, $index ) {
+    //                       dump($node->text());
+    //                       $this->res[$index] =  $node->text();
+    //                      }); 
 
-           return response($this->res);
-        } catch(\Exception $e){
-            return response()->json($e);
-        }
-    }
+    //        return response($this->res);
+    //     } catch(\Exception $e){
+    //         return response()->json($e);
+    //     }
+    // }
 
     // /**
     //  * Function to fill an array
