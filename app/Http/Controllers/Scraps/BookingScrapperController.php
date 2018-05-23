@@ -95,7 +95,7 @@ class BookingScrapperController extends Controller
 
                                 $cname = $node->filter( '.sr-hotel__name' )->count();
                                 if($cname != '0'){
-                         $name = trim( preg_replace( '/[^;\sa-zA-Z0-9áéíóúüñÁÉÍÓÚÜÑ]+/u', ' ', $node->filter( '.sr-hotel__name' )->text() ) );
+                                $name = trim( preg_replace( '/[^;\sa-zA-Z0-9áéíóúüñÁÉÍÓÚÜÑ]+/u', ' ', $node->filter( '.sr-hotel__name' )->text() ) );
                                 }else{
                                     $name = "";
                                 }
@@ -169,7 +169,7 @@ class BookingScrapperController extends Controller
 
     public function scrapSearchByhotel(Request $request)
     {
-       // try{
+        try{
         $var = $request->json()->all();
 
      
@@ -215,8 +215,7 @@ class BookingScrapperController extends Controller
                 $imagenes_hotel= $crawler->filter( '#photos_distinct')->children('a')->extract(array('href') ) ; 
 
                 // print_r($imagenes_hotel);
-                 echo "<br>"; 
-                  echo "<br>";
+                 
                    }else{
                    $imagenes_hotel = "";
                   }
@@ -250,7 +249,7 @@ class BookingScrapperController extends Controller
                     $nodescount2 = $crawler->filter( '#hp_availability_style_changes .description tbody')->count();
                     if($nodescount2 > 0){
 
-
+               try{
                     
                      $crawler->filter('#hp_availability_style_changes .description table tbody ')
                      ->each( function ( $node ) use ($titulo_Hotel, $puntuacion, $direccion_hotel, $descripcion_hotel0,$servicios, $imagenes_hotel) {
@@ -258,7 +257,7 @@ class BookingScrapperController extends Controller
 
 
 
-                $var1 =   $node->filter('tr')->filter('td')->filter('.hprt-roomtype-link')
+                    $var1 =   $node->filter('tr')->filter('td')->filter('.hprt-roomtype-link')
                     ->each(function($noderooms){
 
                       $listado_noderroms = preg_replace( '/\n/', ' ', $noderooms->text());            
@@ -318,46 +317,56 @@ class BookingScrapperController extends Controller
 
                    });
 
+                    
+                               if($titulo_Hotel === "" && $puntuacion === ""){
+                                    $titulo_Hotel = "No disponible";
+                                    $puntuacion = "No disponibile";
+                                }else if($titulo_Hotel != "" && $puntuacion === ""){
+                                    $price = 'No disponible';
+                                }else if($titulo_Hotel === "" && $puntuacion != ""){
+                                    $titulo_Hotel = "No disponible";
+                                }
 
-                    $this->reshotels[] = array(
-                         'Nombre_hotel'  => $titulo_Hotel,
-                         'puntuacion'    => $puntuacion[1],
-                         'direccion'     => $direccion_hotel,
-                         'descripcion'   => $descripcion_hotel0,
-                         'servicios'     => $servicios,
-                         'imagenes'      => $imagenes_hotel,
+
+
+                      if(!in_array($titulo_Hotel, $this->reshotels)){
+                       $this->reshotels[] = array(
+                          'Nombre_hotel'    => $titulo_Hotel,
+                         'puntuacion'      => $puntuacion[1],
+                         'direccion'       => $direccion_hotel,
+                         'descripcion'     => $descripcion_hotel0,
+                         'servicios'       => $servicios,
+                         'imagenes'        => $imagenes_hotel,
                          'Tipo_habitacion' => $var1 ,
-                         'Ocupacion'  =>  $var2 ,
-                         'precio' =>  $var3 ,
-                         'opciones' =>   $var4 ,
-                         'disponibilidad' =>  $var5 
+                         'Ocupacion'       =>  $var2 ,
+                         'precio'          =>  $var3 ,
+                         'opciones'        =>   $var4 ,
+                         'disponibilidad'  =>  $var5 
                                     );
-
+                             }
 
 
                     
-                  }//END IF CONTADOR del nodro
+                               }//END IF CONTADOR del nodro
 
-             });//En crawler principal
+                           });//En crawler principal
 
-
-
-
-             $result =  $this->reshotels;
-           
-
-            return response(array('scrapped'=>$result));
-          
-            
+                        } catch(\Exception $e){
+                        return response()->json($e);
+                    }            
   
-    }//En contador de la tabla
+                   }//En contador de la tabla
+                   else{
+                    return response()->json("No existen nodos");
+                }
 
+             $result = $this->reshotels;
+         
+              return response()->json(['data'=>$result], 200);
 
-
-
-
-
-
+           }  catch(\Exception $e){
+            return  $e;
+        }
 
      }//End de la funcion
 
