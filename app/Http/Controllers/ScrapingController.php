@@ -5,7 +5,8 @@ namespace App\Http\Controllers;
 use Goutte\Client;
 
 use Illuminate\Http\Request;
-
+use App\City;
+use DB;
 
 class ScrapingController extends Controller
 {
@@ -35,5 +36,40 @@ class ScrapingController extends Controller
 
         return view('vista');
     }
+
+
+      public function autocomplete(Request $request)
+     {
+
+      if($request->ajax())
+    {
+     $output = '';
+     $query = $request->get('query');
+     if($query != '')
+     {
+      $data = DB::table('cities')->where('city', 'like', '%'.$query.'%')->take(6)->get();
+       
+     }     
+     $total_row = $data->count();
+
+     if($total_row > 0)
+     {
+
+      foreach($data as $row)
+      {
+       $output .= $row->city.'-'.$row->id.' ';
+      }
+
+     }
+          $data = array(
+      'result'  => $output
+     );
+
+     echo json_encode($data);
+    }
+
+   }
+
+
 
 }

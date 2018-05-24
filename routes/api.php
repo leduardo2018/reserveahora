@@ -25,6 +25,7 @@ Route::group(['prefix'=>'v1', 'middleware'=>'cors'],function(){
     Route::post('/scrap',           'Scraps\BookingScrapperController@scrapSearchByCityAndDate');
 
      Route::post('/scraphotel',           'Scraps\BookingScrapperController@scrapSearchByhotel');
+     
      Route::get('/cities',           'Scraps\BookingScrapperController@autocomplete');
      
      // Route::get('/cities', function(){

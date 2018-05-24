@@ -401,32 +401,42 @@ class BookingScrapperController extends Controller
       public function autocomplete(Request $request)
      {
 
-      if($request->ajax())
-    {
-     $output = '';
-     $query = $request->get('query');
-     if($query != '')
-     {
-      $data = DB::table('cities')->where('city', 'like', '%'.$query.'%')->take(6)->get();
+
+     $searchquery = $request->searchquery;
+       $data = City::where('city','like','%'.$searchquery.'%')->get();
+
+
+      echo json_encode($data);
+
+
+
+
+    //   if($request->ajax())
+    // {
+    //  $output = '';
+    //  $query = $request->get('query');
+    //  if($query != '')
+    //  {
+    //   $data = DB::table('cities')->where('city', 'like', '%'.$query.'%')->take(6)->get();
        
-     }     
-     $total_row = $data->count();
+    //  }     
+    //  $total_row = $data->count();
 
-     if($total_row > 0)
-     {
+    //  if($total_row > 0)
+    //  {
 
-      foreach($data as $row)
-      {
-       $output .= $row->city.'-'.$row->id.' ';
-      }
+    //   foreach($data as $row)
+    //   {
+    //    $output .= $row->city.'-'.$row->id.' ';
+    //   }
 
-     }
-          $data = array(
-      'result'  => $output
-     );
+    //  }
+    //       $data = array(
+    //   'result'  => $output
+    //  );
 
-     echo json_encode($data);
-    }
+    //  echo json_encode($data);
+    // }
 
    }
           
