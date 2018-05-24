@@ -25,14 +25,15 @@ Route::group(['prefix'=>'v1', 'middleware'=>'cors'],function(){
     Route::post('/scrap',           'Scraps\BookingScrapperController@scrapSearchByCityAndDate');
 
      Route::post('/scraphotel',           'Scraps\BookingScrapperController@scrapSearchByhotel');
+     Route::get('/cities',           'Scraps\BookingScrapperController@autocomplete');
      
-     Route::get('/cities', function(){
+     // Route::get('/cities', function(){
 
-            $querystring = Input::get('queryString');
-            $cities = City::where('city', 'like', '%'.$querystring.'%')->get();
-            return response()->json($cities);
+     //        $querystring = Input::get('queryString');
+     //        $cities = City::where('city', 'like', '%'.$querystring.'%')->get();
+     //        return response()->json($cities);
 
-     });
+     // });
 
    // Route::get('/getbookingcities', 'Scraps\BookingScrapperController@getCityDestinationsInfo');
     //Route::get('/getbookingcitiesdestinies', 'DataSources\BookingDataSourcesController@getAllBookingCitiesDestinies');

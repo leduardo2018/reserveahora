@@ -30,4 +30,10 @@ class ScrapingController extends Controller
 
     }
 
+
+    public function vista(){
+
+        return view('vista');
+    }
+
 }

@@ -10,6 +10,10 @@ use App\Http\Controllers\Helpers\HelpersController;
 use Illuminate\Http\JsonResponse;
 use Goutte\Client;
 use GuzzleHttp\Client as GuzzleClient;
+use App\City;
+use DB;
+use Illuminate\Support\Facades\Input;
+
 //use App\Dao\BookingCityDestinyDao;
 
 class BookingScrapperController extends Controller
@@ -125,6 +129,27 @@ class BookingScrapperController extends Controller
                                 }
 
 
+                                $cscore = $node->filter( ' a .review-score-badge' )->count();
+                                if($cscore != '0'){
+                                    $score = $node->filter( 'a .review-score-badge')->text();
+                                }else{
+                                    $score = "No posee puntuacion";
+                                }
+
+                                $caddress = $node->filter( ' .district_link ' )->count();
+                                if($caddress != '0'){
+                                    $address2 = $node->filter( '.district_link ')->text();
+                                    $address= explode('Mostrar en el mapa',$address2);
+                                    $direccion= $address[0];
+                                    
+
+                                }else{
+                                    $address = "no hay direccion";
+                                }
+                                
+
+                              
+
 
 
                                 if($name === "" && $price === ""){
@@ -143,7 +168,9 @@ class BookingScrapperController extends Controller
                                         'name'  =>  $name,
                                         'price' =>  $price,
                                         'link' =>   $link,
-                                        'image' =>  $image
+                                        'image' =>  $image,
+                                        'score' => $score,
+                                        'direccion' => $direccion
                                     );
                                 }
                             
@@ -173,7 +200,7 @@ class BookingScrapperController extends Controller
         $var = $request->json()->all();
 
      
-                 // $url = 'https://www.booking.com/hotel/co/ibis-cartagena-marbella.es.html?label=gen173nr-1DCAEoggJCAlhYSDNYBGgyiAEBmAEKuAEGyAEM2AED6AEBkgIBeagCAw;sid=bc3e43896557080384f6fc1969225d5e;checkin=2018-05-25;checkout=2018-05-26;ucfs=1;srpvid=63a097350844011c;srepoch=1526938221;highlighted_blocks=137800403_97261075_0_2_0;all_sr_blocks=137800403_97261075_0_2_0;bshb=2;room1=A%2CA;hpos=6;hapos=6;dest_type=city;dest_id=-579943;srfid=c87aad6c610e05a60c9a1c3da56a1a37f2d50ac4X6;from=searchresults;highlight_room=#hotelTmpl';
+                  // $url = 'https://www.booking.com/hotel/co/aixo-suites.es.html?label=gen173nr-1DCAEoggJCAlhYSDNYBGgyiAEBmAEKuAEGyAEM2AED6AEBkgIBeagCAw;sid=bc3e43896557080384f6fc1969225d5e;all_sr_blocks=284285304_107731904_0_1_0;checkin=2018-05-25;checkout=2018-05-26;dest_id=-579943;dest_type=city;dist=0;group_adults=3;group_children=0;hapos=4;highlighted_blocks=284285304_107731904_0_1_0;hpos=4;no_rooms=1;req_adults=3;req_children=0;room1=A%2CA%2CA;sb_price_type=total;srepoch=1527092805;srfid=d5ff24cc71158e9350e6e3cb669ef91dffeff1e9X4;srpvid=362e73a1629b00fb;type=total;ucfs=1&#hotelTmpl';
 
                  $url = $var['url'];
 
@@ -210,25 +237,16 @@ class BookingScrapperController extends Controller
                 
                
                   //Scrap de la imagenes del hotel
-                 $cimagenes_hotel = $crawler->filter( '#photos_distinct' )->count();
-                if($cimagenes_hotel != '0'){
                 $imagenes_hotel= $crawler->filter( '#photos_distinct')->children('a')->extract(array('href') ) ; 
-
-                // print_r($imagenes_hotel);
-                 
-                   }else{
-                   $imagenes_hotel = "";
-                  }
-
 
 
                         // //Scrap de la direccion completa del hotel
-                    $direccion_hotel = trim( preg_replace( '/[^;\sa-zA-Z0-9áéíóúüñÁÉÍÓÚÜÑ]\n+/u', ' ', $crawler->filter('.hp_address_subtitle')->text()));  
+                 $direccion_hotel = trim( preg_replace( '/[^;\sa-zA-Z0-9áéíóúüñÁÉÍÓÚÜÑ]\n+/u', ' ', $crawler->filter('.hp_address_subtitle')->text()));  
                 
 
 
                         // //scrap de la descripcion completa.    
-                    $descripcion_hotel0 = trim( preg_replace( '/[^;\sa-zA-Z0-9áéíóúüñÁÉÍÓÚÜÑ]\n+/u', ' ',$crawler->filter('#summary')->text()));
+                 $descripcion_hotel0 = trim( preg_replace( '/[^;\sa-zA-Z0-9áéíóúüñÁÉÍÓÚÜÑ]\n+/u', ' ',$crawler->filter('#summary')->text()));
                    
 
 
@@ -258,22 +276,40 @@ class BookingScrapperController extends Controller
 
 
                     $var1 =   $node->filter('tr')->filter('td')->filter('.hprt-roomtype-link')
-                    ->each(function($noderooms){
+                    ->each(function($noderooms) {
 
-                      $listado_noderroms = preg_replace( '/\n/', ' ', $noderooms->text());            
 
-                        return $listado_noderroms;        
+                         $listado_noderroms = preg_replace( '/\n/', ' ', $noderooms->text()); 
+                         $listado_noderroms2 = preg_replace( '/\n/', ' ', $noderooms->parents()->filter('.hprt-occupancy-occupancy-info')->children()->count());
+                         $listado_noderroms3 =  preg_replace( '/\n/', ' ',$noderooms->parents()->filter('.hprt-price-price')->first()->text());
+                         $listado_noderroms4 = preg_replace( '/\n/', ' ', $noderooms->parents()->filter('.hprt-conditions')->first()->text());
+                         $myoptions = explode('Cancelación', $listado_noderroms4);
+                         $misopciones= $myoptions[0];
+                         $listado_noderroms5 =  preg_replace( '/\n/', ' ', $noderooms->parents()->filter('.hprt-nos-select')->first()->text());
+
+
+
+                          $listado_noderroms2a = preg_replace( '/\n/', ' ', $noderooms->parents()->filter('.hprt-occupancy-occupancy-info')->last()->children()->count());
+                         $listado_noderroms3a =  preg_replace( '/\n/', ' ',$noderooms->parents()->filter('.hprt-price-price')->last()->first()->text());
+                         $listado_noderroms4 = preg_replace( '/\n/', ' ', $noderooms->parents()->filter('.hprt-conditions')->last()->first()->text());
+                         $myoptions = explode('Cancelación', $listado_noderroms4);
+                         $misopcionesa= $myoptions[0];
+                         $listado_noderroms5a =  preg_replace( '/\n/', ' ', $noderooms->parents()->filter('.hprt-nos-select')->last()->first()->text());
+
+                 
+
+                        
+                       return  $listado_noderroms.', '.$listado_noderroms2.', '. $listado_noderroms3.', '. $misopciones.', '. $listado_noderroms5.', '.$listado_noderroms2a ;
                         
 
                     });
 
 
 
-
-                   $var2=  $node->filter('tr')->filter('td')->filter('.hprt-occupancy-occupancy-info')->filter('i')
+                   $var2=  $node->filter('tr')->filter('td')->filter('.hprt-occupancy-occupancy-info')
                     ->each(function($noderooms2){
 
-                       $listado_noderroms2 = preg_replace( '/\n/', ' ', $noderooms2->count());
+                       $listado_noderroms2 = preg_replace( '/\n/', ' ', $noderooms2->children()->count());
 
                        return $listado_noderroms2;
                       
@@ -284,7 +320,7 @@ class BookingScrapperController extends Controller
                    $var3 =   $node->filter('tr')->filter('td')->filter('.hprt-price-price')
                     ->each(function($noderooms3){
 
-                       $listado_noderroms3 =  preg_replace( '/\n/', ' ',$noderooms3->text());
+                       $listado_noderroms3 =  preg_replace( '/\n/', ' ',$noderooms3->first()->text());
 
                        return $listado_noderroms3;
                        
@@ -295,7 +331,7 @@ class BookingScrapperController extends Controller
                   $var4 =     $node->filter('tr')->filter('td')->filter('.hprt-conditions')
                     ->each(function($noderooms4){
 
-                       $listado_noderroms4 = preg_replace( '/\n/', ' ', $noderooms4->text());
+                       $listado_noderroms4 = preg_replace( '/\n/', ' ', $noderooms4->first()->text());
 
                        $myoptions = explode('Cancelación', $listado_noderroms4);
 
@@ -310,7 +346,7 @@ class BookingScrapperController extends Controller
                      $var5 =  $node->filter('tr')->filter('td')->filter('.hprt-nos-select')
                     ->each(function($noderooms5){
 
-                       $listado_noderroms5 =  preg_replace( '/\n/', ' ', $noderooms5->text());
+                       $listado_noderroms5 =  preg_replace( '/\n/', ' ', $noderooms5->first()->text());
 
                     return $listado_noderroms5;
                       
@@ -318,14 +354,6 @@ class BookingScrapperController extends Controller
                    });
 
                     
-                               if($titulo_Hotel === "" && $puntuacion === ""){
-                                    $titulo_Hotel = "No disponible";
-                                    $puntuacion = "No disponibile";
-                                }else if($titulo_Hotel != "" && $puntuacion === ""){
-                                    $price = 'No disponible';
-                                }else if($titulo_Hotel === "" && $puntuacion != ""){
-                                    $titulo_Hotel = "No disponible";
-                                }
 
 
 
@@ -370,7 +398,40 @@ class BookingScrapperController extends Controller
 
      }//End de la funcion
 
+      public function autocomplete(Request $request)
+     {
 
+      if($request->ajax())
+    {
+     $output = '';
+     $query = $request->get('query');
+     if($query != '')
+     {
+      $data = DB::table('cities')->where('city', 'like', '%'.$query.'%')->take(6)->get();
+       
+     }     
+     $total_row = $data->count();
+
+     if($total_row > 0)
+     {
+
+      foreach($data as $row)
+      {
+       $output .= $row->city.'-'.$row->id.' ';
+      }
+
+     }
+          $data = array(
+      'result'  => $output
+     );
+
+     echo json_encode($data);
+    }
+
+   }
+          
+
+     
 
 
     // /**

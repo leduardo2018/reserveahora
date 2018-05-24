@@ -12,11 +12,13 @@
 */
 
 Route::get('/', function () {
-    return view('welcome');
+    return view('home');
 });
 
 Route::get('/scraping', 'ScrapingController@example');
 Route::get('/scrapinghotel', 'Scraps\BookingScrapperController@scrapSearchByhotel');
+Route::get('/autocomplete', 'ScrapingController@vista');
+
 
 
 Auth::routes();
