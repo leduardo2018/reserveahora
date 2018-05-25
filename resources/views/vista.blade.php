@@ -26,7 +26,7 @@
      $('.itemName').select2({
        placeholder: 'Selecciona ciudad',
        ajax: {
-         url: 'http://8aef1f94.ngrok.io/api/v1/cities',
+         url: 'https://8aef1f94.ngrok.io/api/v1/cities',
          dataType: 'json',
          delay: 250,
          processResults: function (data) {
