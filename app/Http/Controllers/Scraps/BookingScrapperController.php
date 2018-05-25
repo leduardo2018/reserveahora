@@ -403,10 +403,9 @@ class BookingScrapperController extends Controller
 
 
      $searchquery = $request->searchquery;
-       $data = City::where('city','like','%'.$searchquery.'%')->get();
+     $data = City::where('city','like','%'.$searchquery.'%')->get();
 
-
-      echo json_encode($data);
+     return response()->json($data);
 
 
 
