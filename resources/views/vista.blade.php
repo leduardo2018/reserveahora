@@ -3,7 +3,7 @@
 
 <head>
 
- <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.js"></script>
+ <script src="{{asset('js/jquery-1.9.1.min.js')}}"></script>
 
 
  <link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" rel="stylesheet" />
@@ -14,13 +14,14 @@
 
 <body>
 
-
- <select class="itemName form-control" style="width:500px;" name="itemName">
+ <select class="itemName form-control" style="width:500px;" name="itemName" id="ve">
      
  </select>
 
 
 <script type="text/javascript">
+
+    
 
 
      $('.itemName').select2({
