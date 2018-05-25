@@ -400,12 +400,24 @@ class BookingScrapperController extends Controller
 
       public function autocomplete(Request $request)
      {
+        $data = [];
 
 
-     $searchquery = $request->searchquery;
-     $data = City::where('city','like','%'.$searchquery.'%')->get();
+       if($request->has('q')){
+           $search = $request->q;
+           $data = DB::table("cities")
+                   ->select("id","city")
+                   ->where('city','LIKE',"%$search%")
+                   ->get();
+       }
 
-     return response()->json($data);
+
+       return response()->json($data);
+
+     // $searchquery = $request->q;
+     // $data = City::where('city','like','%'.$searchquery.'%')->get();
+
+     // return response()->json($data);
 
 
 
