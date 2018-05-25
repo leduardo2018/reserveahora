@@ -280,6 +280,7 @@ class BookingScrapperController extends Controller
 
 
                          $listado_noderroms = preg_replace( '/\n/', ' ', $noderooms->text()); 
+                         $servicios_noderroms =  preg_replace( '/\n/', ' ',  $noderooms->parents()->filter('.hprt-facilities-block')->text());
                          $listado_noderroms2 = preg_replace( '/\n/', ' ', $noderooms->parents()->filter('.hprt-occupancy-occupancy-info')->children()->count());
                          $listado_noderroms3 =  preg_replace( '/\n/', ' ',$noderooms->parents()->filter('.hprt-price-price')->first()->text());
                          $listado_noderroms4 = preg_replace( '/\n/', ' ', $noderooms->parents()->filter('.hprt-conditions')->first()->text());
@@ -289,27 +290,41 @@ class BookingScrapperController extends Controller
 
 
 
-                          $listado_noderroms2a = preg_replace( '/\n/', ' ', $noderooms->parents()->filter('.hprt-occupancy-occupancy-info')->last()->children()->count());
-                         $listado_noderroms3a =  preg_replace( '/\n/', ' ',$noderooms->parents()->filter('.hprt-price-price')->last()->first()->text());
-                         $listado_noderroms4 = preg_replace( '/\n/', ' ', $noderooms->parents()->filter('.hprt-conditions')->last()->first()->text());
+ $listado_noderroms2a = preg_replace( '/\n/', ' ', $noderooms->parents()->filter('.hprt-occupancy-occupancy-info')->last()->children()->count());
+
+$listado_noderroms3a =  preg_replace( '/\n/', ' ',$noderooms->parents()->filter('.hprt-price-price')->last()->first()->text());
+
+ $listado_noderroms4 = preg_replace( '/\n/', ' ', $noderooms->parents()->filter('.hprt-conditions')->last()->first()->text());
                          $myoptions = explode('Cancelación', $listado_noderroms4);
                          $misopcionesa= $myoptions[0];
-                         $listado_noderroms5a =  preg_replace( '/\n/', ' ', $noderooms->parents()->filter('.hprt-nos-select')->last()->first()->text());
+   $listado_noderroms5a =  preg_replace( '/\n/', ' ', $noderooms->parents()->filter('.hprt-nos-select')->last()->first()->text());
 
                  
 
                         
-                       return  $listado_noderroms.', '.$listado_noderroms2.', '. $listado_noderroms3.', '. $misopciones.', '. $listado_noderroms5.', '.$listado_noderroms2a ;
+                       return  $listado_noderroms.' '.$listado_noderroms2.', '. $listado_noderroms3.', '. $misopciones.', '. $listado_noderroms5.', '.$servicios_noderroms;
                         
 
                     });
 
+                    // $var6 = $node->filter('tr')->filter('td')->filter('.hprt-facilities-block')
+                      // ->each(function($noderooms6){
+                      //       $servicios_noderroms =  preg_replace( '/\n/', ' ',  $noderooms->parents()->filter('.hprt-facilities-block')->text());
+                      // });
 
 
-                   $var2=  $node->filter('tr')->filter('td')->filter('.hprt-occupancy-occupancy-info')
+                   $var2=  $node->filter('tr')->filter('.hprt-table-last-row')
                     ->each(function($noderooms2){
 
                        $listado_noderroms2 = preg_replace( '/\n/', ' ', $noderooms2->children()->count());
+
+                      
+
+                       // if ($listado_noderroms_ultimo_count > 0 ) {
+
+                       //     $listado_noderroms_ultimo = 'stop';
+                       // }
+                       // print_r($listado_noderroms_ultimo);
 
                        return $listado_noderroms2;
                       
@@ -365,7 +380,7 @@ class BookingScrapperController extends Controller
                          'descripcion'     => $descripcion_hotel0,
                          'servicios'       => $servicios,
                          'imagenes'        => $imagenes_hotel,
-                         'Tipo_habitacion' => $var1 ,
+                          'Tipo_habitacion' => $var1 ,
                          'Ocupacion'       =>  $var2 ,
                          'precio'          =>  $var3 ,
                          'opciones'        =>   $var4 ,
@@ -398,6 +413,10 @@ class BookingScrapperController extends Controller
 
      }//End de la funcion
 
+
+
+
+
       public function autocomplete(Request $request)
      {
         $data = [];
@@ -411,44 +430,8 @@ class BookingScrapperController extends Controller
                    ->get();
        }
 
-
        return response()->json($data);
-
-     // $searchquery = $request->q;
-     // $data = City::where('city','like','%'.$searchquery.'%')->get();
-
-     // return response()->json($data);
-
-
-
-
-    //   if($request->ajax())
-    // {
-    //  $output = '';
-    //  $query = $request->get('query');
-    //  if($query != '')
-    //  {
-    //   $data = DB::table('cities')->where('city', 'like', '%'.$query.'%')->take(6)->get();
-       
-    //  }     
-    //  $total_row = $data->count();
-
-    //  if($total_row > 0)
-    //  {
-
-    //   foreach($data as $row)
-    //   {
-    //    $output .= $row->city.'-'.$row->id.' ';
-    //   }
-
-    //  }
-    //       $data = array(
-    //   'result'  => $output
-    //  );
-
-    //  echo json_encode($data);
-    // }
-
+ 
    }
           
 

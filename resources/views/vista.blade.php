@@ -14,15 +14,12 @@
 
 <body>
 
- <select class="itemName form-control" style="width:500px;" name="itemName" id="ve">
+ <select class="itemName form-control" style="width:500px;" name="itemName" >
      
  </select>
 
 
 <script type="text/javascript">
-
-    
-
 
      $('.itemName').select2({
        placeholder: 'Selecciona ciudad',
