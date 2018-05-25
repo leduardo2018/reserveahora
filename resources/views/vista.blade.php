@@ -41,7 +41,7 @@
        autoComplete(){
        this.data_results = [];
        if(this.searchquery.length > 2){
-        axios.get('https://253a4510.ngrok.io/api/v1/cities',{params: {searchquery: this.searchquery}}).then(response => {
+        axios.get('https://f96ba4f6.ngrok.io/api/v1/cities',{params: {searchquery: this.searchquery}}).then(response => {
            console.log(response);
          this.data_results = response.data;
         });
