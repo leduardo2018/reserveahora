@@ -200,9 +200,9 @@ class BookingScrapperController extends Controller
         $var = $request->json()->all();
 
      
-                  // $url = 'https://www.booking.com/hotel/co/aixo-suites.es.html?label=gen173nr-1DCAEoggJCAlhYSDNYBGgyiAEBmAEKuAEGyAEM2AED6AEBkgIBeagCAw;sid=bc3e43896557080384f6fc1969225d5e;all_sr_blocks=284285304_107731904_0_1_0;checkin=2018-05-25;checkout=2018-05-26;dest_id=-579943;dest_type=city;dist=0;group_adults=3;group_children=0;hapos=4;highlighted_blocks=284285304_107731904_0_1_0;hpos=4;no_rooms=1;req_adults=3;req_children=0;room1=A%2CA%2CA;sb_price_type=total;srepoch=1527092805;srfid=d5ff24cc71158e9350e6e3cb669ef91dffeff1e9X4;srpvid=362e73a1629b00fb;type=total;ucfs=1&#hotelTmpl';
+                   // $url = 'https://www.booking.com/hotel/co/hostal-buena-onda.es.html?aid=304142;label=gen173nr-1DCAEoggJCAlhYSDNYBGgyiAEBmAEKuAEGyAEM2AED6AEBkgIBeagCAw;sid=ca03b3753db3fc2a0e630f398ad96d08;all_sr_blocks=186068211_100552968_2_0_0;bshb=2;checkin=2018-06-01;checkout=2018-06-02;dest_id=900054926;dest_type=city;dist=0;group_adults=2;hapos=1;highlighted_blocks=186068211_100552968_2_0_0;hpos=1;room1=A%2CA;sb_price_type=total;srepoch=1527526233;srfid=b2d08a285d1982f1c2694eb97c326769f31e7df2X1;srpvid=fb0d766c0a130221;type=total;ucfs=1&#hotelTmpl';
 
-                 $url = $var['url'];
+                $url = $var['url'];
 
 
                 $crawl = new Client();
@@ -275,34 +275,25 @@ class BookingScrapperController extends Controller
 
 
 
-                    $var1 =   $node->filter('tr')->filter('td')->filter('.hprt-roomtype-link')
+                    $tipo_de_habitacion =   $node->filter('tr')->filter('td')->filter('.hprt-roomtype-link')
                     ->each(function($noderooms) {
 
-
                          $listado_noderroms = preg_replace( '/\n/', ' ', $noderooms->text()); 
-                         $servicios_noderroms =  preg_replace( '/\n/', ' ',  $noderooms->parents()->filter('.hprt-facilities-block')->text());
-                         $listado_noderroms2 = preg_replace( '/\n/', ' ', $noderooms->parents()->filter('.hprt-occupancy-occupancy-info')->children()->count());
-                         $listado_noderroms3 =  preg_replace( '/\n/', ' ',$noderooms->parents()->filter('.hprt-price-price')->first()->text());
-                         $listado_noderroms4 = preg_replace( '/\n/', ' ', $noderooms->parents()->filter('.hprt-conditions')->first()->text());
-                         $myoptions = explode('Cancelación', $listado_noderroms4);
-                         $misopciones= $myoptions[0];
-                         $listado_noderroms5 =  preg_replace( '/\n/', ' ', $noderooms->parents()->filter('.hprt-nos-select')->first()->text());
+
+                             $myoptions = explode('Ver', $listado_noderroms);
+
+                             $misopciones= $myoptions[0];
 
 
-
- $listado_noderroms2a = preg_replace( '/\n/', ' ', $noderooms->parents()->filter('.hprt-occupancy-occupancy-info')->last()->children()->count());
-
-$listado_noderroms3a =  preg_replace( '/\n/', ' ',$noderooms->parents()->filter('.hprt-price-price')->last()->first()->text());
-
- $listado_noderroms4 = preg_replace( '/\n/', ' ', $noderooms->parents()->filter('.hprt-conditions')->last()->first()->text());
-                         $myoptions = explode('Cancelación', $listado_noderroms4);
-                         $misopcionesa= $myoptions[0];
-   $listado_noderroms5a =  preg_replace( '/\n/', ' ', $noderooms->parents()->filter('.hprt-nos-select')->last()->first()->text());
-
-                 
-
-                        
-                       return  $listado_noderroms.' '.$listado_noderroms2.', '. $listado_noderroms3.', '. $misopciones.', '. $listado_noderroms5.', '.$servicios_noderroms;
+                         // $servicios_noderroms =  preg_replace( '/\n/', ' ',  $noderooms->parents()->filter('.hprt-facilities-block')->text());
+                         // $listado_noderroms2 = preg_replace( '/\n/', ' ', $noderooms->parents()->filter('.hprt-occupancy-occupancy-info')->children()->count());
+                         // $listado_noderroms3 =  preg_replace( '/\n/', ' ',$noderooms->parents()->filter('.hprt-price-price')->first()->text());
+                         // $listado_noderroms4 = preg_replace( '/\n/', ' ', $noderooms->parents()->filter('.hprt-conditions')->first()->text());
+                         // $myoptions = explode('Cancelación', $listado_noderroms4);
+                         // $misopciones= $myoptions[0];
+                         // $listado_noderroms5 =  preg_replace( '/\n/', ' ', $noderooms->parents()->filter('.hprt-nos-select')->first()->text());
+                    return  $misopciones;
+                       //.' '.$listado_noderroms2.', '. $listado_noderroms3.', '. $misopciones.', '. $listado_noderroms5.', '.$servicios_noderroms;
                         
 
                     });
@@ -312,13 +303,53 @@ $listado_noderroms3a =  preg_replace( '/\n/', ' ',$noderooms->parents()->filter(
                       //       $servicios_noderroms =  preg_replace( '/\n/', ' ',  $noderooms->parents()->filter('.hprt-facilities-block')->text());
                       // });
 
+                     $servicios_por_tipo_habitacion=  $node->filter('tr')->filter('.hprt-facilities-block')
+                    ->each(function($noderooms7){
 
-                   $var2=  $node->filter('tr')->filter('.hprt-table-last-row')
+                       $listado_noderroms7 = preg_replace( '/\n/', ' ', $noderooms7->text());
+
+                       return $listado_noderroms7;
+                        
+
+                   });
+                 
+
+
+                 
+
+                   $precio_de_tipo_habitacion =   $node->filter('tr')->filter('td')->filter('.hprt-price-price')
+                    ->each(function($noderooms3){
+
+                       $listado_noderroms3 =  preg_replace( '/\n/', ' ',$noderooms3->text());
+
+                       $last_row =  preg_replace( '/\n/', ' ', $noderooms3->parents()->parents()->filter('tr')->filter('.hprt-table-last-row')->filter('td')->filter('.hprt-price-price')->text());
+
+                         $vacio = 'this is the last Node';
+                        $vacio2 =' ';
+
+                      if($listado_noderroms3 === $last_row){
+
+
+                    return $listado_noderroms3.'-'.$vacio;
+                          }else{
+
+                     return $listado_noderroms3.' '.$vacio2;
+                                 }
+ 
+
+
+
+                       // return $listado_noderroms3;
+                       
+                   });
+
+
+                      $ocupacion_de_tipo_habitacion=  $node->filter('tr')->filter('.hprt-occupancy-occupancy-info')
                     ->each(function($noderooms2){
 
-                       $listado_noderroms2 = preg_replace( '/\n/', ' ', $noderooms2->children()->count());
-
-                      
+                       $listado_noderroms2 = preg_replace( '/\n/', ' ', $noderooms2->filter('i')->count());
+                       $multiplicador =  preg_replace( '/\n/', ' ', $noderooms2->text());
+                     
 
                        // if ($listado_noderroms_ultimo_count > 0 ) {
 
@@ -326,47 +357,70 @@ $listado_noderroms3a =  preg_replace( '/\n/', ' ',$noderooms->parents()->filter(
                        // }
                        // print_r($listado_noderroms_ultimo);
 
-                       return $listado_noderroms2;
+                       return ($listado_noderroms2.' '.$multiplicador);
                       
 
                    });
 
 
-                   $var3 =   $node->filter('tr')->filter('td')->filter('.hprt-price-price')
-                    ->each(function($noderooms3){
-
-                       $listado_noderroms3 =  preg_replace( '/\n/', ' ',$noderooms3->first()->text());
-
-                       return $listado_noderroms3;
-                       
-                   });
 
 
-
-                  $var4 =     $node->filter('tr')->filter('td')->filter('.hprt-conditions')
+                  $condiciones_de_tipo_habitacion =     $node->filter('tr')->filter('td')->filter('.hprt-conditions')
                     ->each(function($noderooms4){
 
-                       $listado_noderroms4 = preg_replace( '/\n/', ' ', $noderooms4->first()->text());
+                       $listado_noderroms4 = preg_replace( '/\n/', ' ', $noderooms4->text());
 
                        $myoptions = explode('Cancelación', $listado_noderroms4);
 
                        $misopciones= $myoptions[0];
 
-                       return $misopciones;
+                       return $listado_noderroms4;
                        
 
                    });
 
 
-                     $var5 =  $node->filter('tr')->filter('td')->filter('.hprt-nos-select')
+
+
+                     $disponibilidad_de_tipo_habitacion =  $node->filter('tr')->filter('td')->filter('.hprt-nos-select')
                     ->each(function($noderooms5){
 
-                       $listado_noderroms5 =  preg_replace( '/\n/', ' ', $noderooms5->first()->text());
+                       $listado_noderroms5 =  preg_replace( '/\n/', ' ', $noderooms5->text());
 
-                    return $listado_noderroms5;
+                     $last_row =  preg_replace( '/\n/', ' ', $noderooms5->parents()->parents()->filter('tr')->filter('.hprt-table-last-row')->filter('td')->filter('.hprt-nos-select')->text());
+
+                       $vacio = 'this is the last Node';
+                       $vacio2 =' ';
+
+                         if($listado_noderroms5 === $last_row){
+
+
+                    return $listado_noderroms5.'-'.$vacio;
+                          }else{
+
+                     return $listado_noderroms5.' '.$vacio2;
+                                 }
+ 
+ 
+         });
+
+
+                   
+
+
+                   //  $var6 =  $node->filter('.hprt-table-last-row')
+                   //  ->each(function($noderooms6){
+
+                   //     $ultima_ocupacion =  preg_replace( '/\n/', ' ', $noderooms6->filter('td')->filter('.hprt-occupancy-occupancy-info')->children()->count());
+                   //     $ultimo_precio =  preg_replace( '/\n/', ' ', $noderooms6->filter('td')->filter('.hprt-price-price')->text());
+                   //     $ultima_condicion =  preg_replace( '/\n/', ' ', $noderooms6->filter('td')->filter('.hprt-conditions')->text());
+                   //     $ultima_disponibilidad =  preg_replace( '/\n/', ' ', $noderooms6->filter('td')->filter('.hprt-nos-select')->text());
+
+                   //  return ($ultima_ocupacion.', '. $ultimo_precio.', '.$ultima_condicion.', '.$ultima_disponibilidad);
                       
 
-                   });
+                   // });
+
 
                     
 
@@ -374,17 +428,19 @@ $listado_noderroms3a =  preg_replace( '/\n/', ' ',$noderooms->parents()->filter(
 
                       if(!in_array($titulo_Hotel, $this->reshotels)){
                        $this->reshotels[] = array(
-                          'Nombre_hotel'    => $titulo_Hotel,
+                         'Nombre_hotel'    => $titulo_Hotel,
                          'puntuacion'      => $puntuacion[1],
                          'direccion'       => $direccion_hotel,
                          'descripcion'     => $descripcion_hotel0,
                          'servicios'       => $servicios,
                          'imagenes'        => $imagenes_hotel,
-                          'Tipo_habitacion' => $var1 ,
-                         'Ocupacion'       =>  $var2 ,
-                         'precio'          =>  $var3 ,
-                         'opciones'        =>   $var4 ,
-                         'disponibilidad'  =>  $var5 
+                         'Tipo_habitacion' =>  $tipo_de_habitacion,
+                         'servicios_por_tipo_habitacion' => $servicios_por_tipo_habitacion,
+                          'precio'          =>  $precio_de_tipo_habitacion ,
+                         'Ocupacion'       =>  $ocupacion_de_tipo_habitacion ,
+                         'opciones'        =>  $condiciones_de_tipo_habitacion ,
+                         'disponibilidad'  =>  $disponibilidad_de_tipo_habitacion ,
+                         // 'prueba'  =>  $var6 
                                     );
                              }
 
@@ -414,9 +470,6 @@ $listado_noderroms3a =  preg_replace( '/\n/', ' ',$noderooms->parents()->filter(
      }//End de la funcion
 
 
-
-
-
       public function autocomplete(Request $request)
      {
         $data = [];
@@ -433,6 +486,18 @@ $listado_noderroms3a =  preg_replace( '/\n/', ' ',$noderooms->parents()->filter(
        return response()->json($data);
  
    }
+
+
+
+   public function allcity(){
+
+           $data = [];
+
+           $data = DB::table("cities")->get(); 
+
+           return response()->json($data);
+   }
+
           
 
      

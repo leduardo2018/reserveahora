@@ -22,6 +22,7 @@ Route::get('/cities',       'ScrapingController@autocomplete');
 
 
 
+
 Auth::routes();
 
 Route::get('/home', 'HomeController@index')->name('home');
