@@ -31,6 +31,7 @@
            return {
              results:  $.map(data, function (item) {
                    return {
+                    
                        text: item.city,
                        id: item.id,
                        text:item.id
@@ -48,17 +49,6 @@
 
 </body>
 </html>
-
-
-
-
-
-
-
-
-
-
-
 
 
 
