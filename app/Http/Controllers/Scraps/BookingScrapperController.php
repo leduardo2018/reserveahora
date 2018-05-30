@@ -29,8 +29,9 @@ class BookingScrapperController extends Controller
     public function scrapSearchByCityAndDate(Request $request)
     {
                    try{
-                      $var = $request->json()->all();
 
+                        $var = $request->json()->all();
+                     
                       
                          $url    =   'https://www.booking.com/';
                           $endpoint   =   'searchresults.es.html?';
@@ -59,6 +60,7 @@ class BookingScrapperController extends Controller
                 'checkout_year'     =>      substr($var['checkout'], 0,4),
                 'group_adults'      =>      ($var['adult']['quantity'] != null ? $var['adult']['quantity'] : 0 ),
                 'group_children'    =>      ($var['child']['quantity'] != null ? $var['child']['quantity'] : 0),
+                //'age'               =>      ($var['child']['age'] != null ? $var['child']['age'] : 0),
                 'no_rooms'          =>      ($var['destiny']['idcity']  !=  null ? $var['destiny']['idcity'] : 0),
                 'ss_raw'            =>      $var['destiny']['city'],
                 'ac_position'       =>      0,
@@ -79,8 +81,8 @@ class BookingScrapperController extends Controller
                 ? $crawler->filter('.results-paging .x-list li:nth-last-child(2)')->text()
                 : 0);
 
-            for ($i = 0; $i < 1; $i++) {
-                if ( $i != 0 ) {
+            for ($i = 0; $i <1; $i++) {
+                if ( $i != 0 ) {    
                     $p = $i * 15;
                     $crawler = $crawl->request('GET', $url.$endpoint.http_build_query($data).'&rows=15&offset='.$p,
                         ['stream' => true,
@@ -102,12 +104,46 @@ class BookingScrapperController extends Controller
                                     $name = "";
                                 }
 
-                                $cprice = $node->filter( '.price' )->count();
+
+
+                                // if(){
+                                //     $precio = $node->filter( '.totalPrice' )->text();
+                                //     $elprecio= explode('COP',$precio);
+                                //     $price= $elprecio[1];
+
+                                //   }
+                                //    else{
+                                //     $precio = $node->filter( '.Price' )->text();
+                                //     $elprecio= explode('COP',$precio);
+                                //     $price= $elprecio[1];
+
+                                //  }
+
+                                $cprice2 = $node->filter( '.price' )->count();
+                                if($cprice2 != '0'){
+                                    $signo_peso = '$';
+                                    $precio2 = $node->filter( '.price' )->text();
+                                    $elprecio2= explode('COP',$precio2);
+                                    $price2 = $signo_peso.' '.$elprecio2[1];
+
+                                }else{
+                                    $price2 = "";
+                                }
+
+
+                                 $cprice = $node->filter( '.totalPrice' )->count();
                                 if($cprice != '0'){
-                                    $price = str_replace( 'COP', '', preg_replace( '/[^A-Za-z0-9\-]/', '', $node->filter( '.price' )->text() ) );
+                                    $signo_peso = '$';
+                                    $precio = $node->filter( '.totalPrice' )->text();
+                                    $elprecio= explode('COP',$precio);
+                                    $price = $signo_peso.' '.$elprecio[1];
+
                                 }else{
                                     $price = "";
                                 }
+
+
+
 
                                 $hotelid = $node->filter('.sr_item')->attr('data-hotelid');
 
@@ -139,24 +175,40 @@ class BookingScrapperController extends Controller
                                     $address2 = $node->filter( '.district_link ')->text();
                                     $address= explode('Mostrar en el mapa',$address2);
                                     $direccion= $address[0];
-                                    
-
                                 }else{
                                     $address = "no hay direccion";
                                 }
+
+
+
+                                  $ckilometer = $node->filter( '.distfromdest' )->count();
+                                if($ckilometer != '0'){
+
+                                    $kilometers = preg_replace( '/\n/', ' ', $node->filter( '.distfromdest')->text());
+                                }else{
+                                    $kilometers = "";
+                                }
+
+
+                                   $crecomentation = $node->filter( '.room_link' )->count();
+                                if($crecomentation != '0'){
+                                  
+                                    $recommendation = preg_replace( '/\n/', ' ',$node->filter( '.room_link')->text());
+                                }
+                                else{
+                                    $recommendation = "no hay una monda";
+                                }
                                 
-
-                              
-
-
 
                                 if($name === "" && $price === ""){
                                     $name = "No disponible";
-                                    $price = "No disponibile";
+                                    
                                 }else if($name != "" && $price === ""){
-                                    $price = 'No disponible';
+                                    
                                 }else if($name === "" && $price != ""){
                                     $name = "No disponible";
+                                }else if ($price2 ==="" && $price != "" ){
+                                    
                                 }
 
 
@@ -165,10 +217,14 @@ class BookingScrapperController extends Controller
                                         'id'    =>  $hotelid,
                                         'name'  =>  $name,
                                         'price' =>  $price,
+                                        'price2' => $price2,
                                         'link' =>   $link,
                                         'image' =>  $image,
-                                        'score' => $score,
-                                        'direccion' => $direccion
+                                        'score' =>  $score,
+                                        'direccion' => $direccion,
+                                        'kilometers' => $kilometers,
+                                        'recommendation' => $recommendation
+
                                     );
                                 }
                             
@@ -434,7 +490,7 @@ class BookingScrapperController extends Controller
                          'imagenes'        => $imagenes_hotel,
                          'Tipo_habitacion' =>  $tipo_de_habitacion,
                          'servicios_por_tipo_habitacion' => $servicios_por_tipo_habitacion,
-                          'precio'          =>  $precio_de_tipo_habitacion ,
+                         'precio'          =>  $precio_de_tipo_habitacion ,
                          'Ocupacion'       =>  $ocupacion_de_tipo_habitacion ,
                          'opciones'        =>  $condiciones_de_tipo_habitacion ,
                          'disponibilidad'  =>  $disponibilidad_de_tipo_habitacion ,
@@ -468,6 +524,8 @@ class BookingScrapperController extends Controller
      }//End de la funcion
 
 
+
+     //funcion para recuperar la información de las ciudades 
       public function autocomplete(Request $request)
      {
         $data = [];
