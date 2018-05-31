@@ -183,7 +183,6 @@ class BookingScrapperController extends Controller
 
                                   $ckilometer = $node->filter( '.distfromdest' )->count();
                                 if($ckilometer != '0'){
-
                                     $kilometers = preg_replace( '/\n/', ' ', $node->filter( '.distfromdest')->text());
                                 }else{
                                     $kilometers = "";
@@ -192,17 +191,27 @@ class BookingScrapperController extends Controller
 
                                    $crecomentation = $node->filter( '.room_link' )->count();
                                 if($crecomentation != '0'){
-                                  
-                                    $recommendation = preg_replace( '/\n/', ' ',$node->filter( '.room_link')->text());
+                                  $recommendation = preg_replace( '/\n/', ' ',$node->filter( '.room_link')->text());
                                 }
                                 else{
-                                    $recommendation = "no hay una monda";
+                                    $recommendation = "";
                                 }
+
+                                  $cservices = $node->filter( '.sr_room_reinforcement' )->count();
+                                if($cservices != '0'){
+                                  $services = preg_replace( '/\n/', ' ',$node->filter( '.sr_room_reinforcement')->text());
+                                }
+                                else{
+                                    $services = "";
+                                }
+
+                                // sr_room_reinforcement
+
+                                // .sr_room_reinforcement
                                 
 
                                 if($name === "" && $price === ""){
-                                    $name = "No disponible";
-                                    
+                                    $name = "No disponible";                                
                                 }else if($name != "" && $price === ""){
                                     
                                 }else if($name === "" && $price != ""){
@@ -223,7 +232,8 @@ class BookingScrapperController extends Controller
                                         'score' =>  $score,
                                         'direccion' => $direccion,
                                         'kilometers' => $kilometers,
-                                        'recommendation' => $recommendation
+                                        'recommendation' => $recommendation,
+                                        'services' => $services
 
                                     );
                                 }
@@ -331,86 +341,43 @@ class BookingScrapperController extends Controller
 
                     $tipo_de_habitacion =   $node->filter('tr')->filter('td')->filter('.hprt-roomtype-link')
                     ->each(function($noderooms) {
-
                          $listado_noderroms = preg_replace( '/\n/', ' ', $noderooms->text()); 
-
                              $myoptions = explode('Ver', $listado_noderroms);
-
                              $misopciones= $myoptions[0];
-
-
-                         // $servicios_noderroms =  preg_replace( '/\n/', ' ',  $noderooms->parents()->filter('.hprt-facilities-block')->text());
-                         // $listado_noderroms2 = preg_replace( '/\n/', ' ', $noderooms->parents()->filter('.hprt-occupancy-occupancy-info')->children()->count());
-                         // $listado_noderroms3 =  preg_replace( '/\n/', ' ',$noderooms->parents()->filter('.hprt-price-price')->first()->text());
-                         // $listado_noderroms4 = preg_replace( '/\n/', ' ', $noderooms->parents()->filter('.hprt-conditions')->first()->text());
-                         // $myoptions = explode('Cancelación', $listado_noderroms4);
-                         // $misopciones= $myoptions[0];
-                         // $listado_noderroms5 =  preg_replace( '/\n/', ' ', $noderooms->parents()->filter('.hprt-nos-select')->first()->text());
-                    return  $misopciones;
-                       //.' '.$listado_noderroms2.', '. $listado_noderroms3.', '. $misopciones.', '. $listado_noderroms5.', '.$servicios_noderroms;
-                        
-
+                      return  $misopciones;                                             
                     });
 
-                    // $var6 = $node->filter('tr')->filter('td')->filter('.hprt-facilities-block')
-                      // ->each(function($noderooms6){
-                      //       $servicios_noderroms =  preg_replace( '/\n/', ' ',  $noderooms->parents()->filter('.hprt-facilities-block')->text());
-                      // });
+                
 
                      $servicios_por_tipo_habitacion=  $node->filter('tr')->filter('.hprt-facilities-block')
                     ->each(function($noderooms7){
-
                        $listado_noderroms7 = preg_replace( '/\n/', ' ', $noderooms7->text());
-
-                       return $listado_noderroms7;
-                        
-
+                       return $listado_noderroms7;                      
                    });
                  
 
 
                  
-
+                    //Scrap del precio por tipo de habitacion
+                    //se agrgrefa un mensaje al costado de cada resultado, para definir cual es el ultimo nodo que pertenece a cada tipo de habitacion
                    $precio_de_tipo_habitacion =   $node->filter('tr')->filter('td')->filter('.hprt-price-price')
                     ->each(function($noderooms3){
-
                        $listado_noderroms3 =  preg_replace( '/\n/', ' ',$noderooms3->text());
-
                        $last_row =  preg_replace( '/\n/', ' ', $noderooms3->parents()->parents()->filter('tr')->filter('.hprt-table-last-row')->filter('td')->filter('.hprt-price-price')->text());
-
                          $vacio = 'this is the last Node';
-                        $vacio2 =' ';
-
+                         $vacio2 =' ';
                       if($listado_noderroms3 === $last_row){
-
-
                     return $listado_noderroms3.'-'.$vacio;
                           }else{
-
                      return $listado_noderroms3.' '.$vacio2;
-                                 }
- 
-
-
-
-                       // return $listado_noderroms3;
-                       
+                                 }                      
                    });
 
-
+                        //scrap de ocupacion por tipos de habitacion
                       $ocupacion_de_tipo_habitacion=  $node->filter('tr')->filter('.hprt-occupancy-occupancy-info')
                     ->each(function($noderooms2){
-
                        $listado_noderroms2 = preg_replace( '/\n/', ' ', $noderooms2->filter('i')->count());
                        $multiplicador =  preg_replace( '/\n/', ' ', $noderooms2->text());
-                     
-
-                       // if ($listado_noderroms_ultimo_count > 0 ) {
-
-                       //     $listado_noderroms_ultimo = 'stop';
-                       // }
-                       // print_r($listado_noderroms_ultimo);
-
                        return ($listado_noderroms2.' '.$multiplicador);
                       
 
@@ -418,45 +385,30 @@ class BookingScrapperController extends Controller
 
 
 
-
+                    //srap de las opciones por tipo de habitacion
                   $condiciones_de_tipo_habitacion =     $node->filter('tr')->filter('td')->filter('.hprt-conditions')
                     ->each(function($noderooms4){
-
                        $listado_noderroms4 = preg_replace( '/\n/', ' ', $noderooms4->text());
-
                        $myoptions = explode('Cancelación', $listado_noderroms4);
-
                        $misopciones= $myoptions[0];
-
-                       return $listado_noderroms4;
-                       
-
+                       return $listado_noderroms4;                    
                    });
 
 
 
-
+                    //scrap de la disponibilidad por el tipo de habitacion, Recordemos que se agrega un mensaje a los ultimos nodos que pertenecen a cada tipo de habitacion
                      $disponibilidad_de_tipo_habitacion =  $node->filter('tr')->filter('td')->filter('.hprt-nos-select')
                     ->each(function($noderooms5){
-
                        $listado_noderroms5 =  preg_replace( '/\n/', ' ', $noderooms5->text());
-
                      $last_row =  preg_replace( '/\n/', ' ', $noderooms5->parents()->parents()->filter('tr')->filter('.hprt-table-last-row')->filter('td')->filter('.hprt-nos-select')->text());
-
                        $vacio = 'this is the last Node';
                        $vacio2 =' ';
-
                          if($listado_noderroms5 === $last_row){
-
-
                     return $listado_noderroms5.'-'.$vacio;
                           }else{
-
                      return $listado_noderroms5.' '.$vacio2;
                                  }
- 
- 
-         });
+                         });
 
 
                    
