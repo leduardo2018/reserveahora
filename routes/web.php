@@ -12,7 +12,7 @@
 */
 
 Route::get('/', function () {
-    return view('login');
+    return redirect('/login');
 });
 
 Route::get('/scraping', 'ScrapingController@example');
