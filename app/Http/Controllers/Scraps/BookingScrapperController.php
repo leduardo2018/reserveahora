@@ -61,7 +61,7 @@ class BookingScrapperController extends Controller
                 'checkout_year'     =>      substr($var['checkout'], 0,4),
                 'group_adults'      =>      ($var['adult']['quantity'] != null ? $var['adult']['quantity'] : 0 ),
                 'group_children'    =>      ($var['child']['quantity'] != null ? $var['child']['quantity'] : 0),
-                //'age'               =>      ($var['child']['age'] != null ? $var['child']['age'] : 0),
+                 'age'               =>      ($var['child']['age1'] != null ? $var['child']['age1'] : 0),
                 'no_rooms'          =>      ($var['destiny']['idcity']  !=  null ? $var['destiny']['idcity'] : 0),
                 'ss_raw'            =>      $var['destiny']['city'],
                 'ac_position'       =>      0,
@@ -321,8 +321,49 @@ class BookingScrapperController extends Controller
                   $puntuacion =preg_replace( '/\n/', ' ',$puntuacion2);
                 
                
+
+
+
+
+
+
+
+              
+
                   //Scrap de la imagenes del hotel
-                $imagenes_hotel= $crawler->filter( '#photos_distinct')->children('a')->extract(array('href') ) ; 
+                      $cimagenes_hotel= $crawler->filter('.bh-photo-grid-thumb-cell')->count();
+                    if($cimagenes_hotel !=0){
+                      $imagenes_hotel= $crawler->filter( '.bh-photo-grid-thumb-cell')
+                     ->each(function($fotografia){
+                        $nodofotografia = $fotografia->children('a')->extract(array('href')); 
+                        return $nodofotografia;
+                      });
+                    }
+                    else{
+                     $imagenes_hotel= $crawler->filter( '#photos_distinct')->children('a')->extract(array('href') ) ;                                     
+                      }
+                      
+
+
+                    //   $cimagenes_hotel2= $crawler->filter('.bh-photo-grid-thumbs')->children()->extract(array('href') ) ;
+                    //   if($cimagenes_hotel2 !=0){
+                    //       print_r('Imprime esta monda');
+                    //      //$imagenes_hotel2= $crawler->filter( '.bh-photo-grid-thumbs')->children('a')->extract(array('href') ) ; 
+                    //      }else{
+                    //          $imagenes_hotel2="";
+                    //      }
+               // $imagenes_hotel= $crawler->filter( '')->children('a')->extract(array('href') ) ; 
+
+
+
+
+
+
+
+
+
+
+
 
 
                         // //Scrap de la direccion completa del hotel
@@ -372,7 +413,7 @@ class BookingScrapperController extends Controller
 
 
                      //autor de comentarios
-                       $comentarios_autor = $crawler->filter('.hp-social-proof-review_score')->filter('div')->filter('.hp-social_proof-quote_author-details')
+                 $comentarios_autor = $crawler->filter('.hp-social-proof-review_score')->filter('div')->filter('.hp-social_proof-quote_author-details')
                      ->each(function($social){
         
                      $listado_autores = preg_replace( '/\n/', ' ', $social
@@ -394,7 +435,9 @@ class BookingScrapperController extends Controller
                try{
                     
                      $crawler->filter('#hp_availability_style_changes .description table tbody ')
-                     ->each( function ( $node ) use ($titulo_Hotel, $puntuacion, $direccion_hotel, $descripcion_hotel0,$servicios_hotel, $imagenes_hotel,$hotel_id,$estrellas
+                     ->each( function ( $node ) use ($titulo_Hotel, $puntuacion, $direccion_hotel, $descripcion_hotel0,$servicios_hotel,$imagenes_hotel
+               //,$imagenes_hotel2
+                     ,$hotel_id,$estrellas
                         ,$comentarios_hotel
                         ,$comentarios_autor
                      ) {
@@ -505,6 +548,7 @@ class BookingScrapperController extends Controller
                          'descripcion'     => $descripcion_hotel0,
                          'servicios'       => $servicios_hotel,
                          'imagenes'        => $imagenes_hotel,
+                         //'imagenes2'        => $imagenes_hotel2,
                          'Tipo_habitacion' =>  $tipo_de_habitacion,
                          'servicios_por_tipo_habitacion' => $servicios_por_tipo_habitacion,
                          'precio'          =>  $precio_de_tipo_habitacion ,
