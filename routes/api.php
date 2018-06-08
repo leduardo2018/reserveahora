@@ -19,13 +19,21 @@ Route::middleware('auth:api')->get('/user', function (Request $request) {
 });
 
 
+
+     Route::post('/register', 'Auth\RegisterController@register');
+     Route::post('/login', 'Auth\LoginController@login');   
+     Route::post('/logout','Auth\LoginController@logout');
+
+
+
+
+
 Route::group(['prefix'=>'v1', 'middleware'=>'cors'],function(){
 
-
     Route::post('/scrap',           'Scraps\BookingScrapperController@scrapSearchByCityAndDate');
-
-     Route::post('/scraphotel',           'Scraps\BookingScrapperController@scrapSearchByhotel');
+    Route::post('/scraphotel',           'Scraps\BookingScrapperController@scrapSearchByhotel');
      
+
      Route::get('/cities',           'Scraps\BookingScrapperController@autocomplete');
      Route::get('/allcities',    'Scraps\BookingScrapperController@allcity');
      
@@ -36,7 +44,6 @@ Route::group(['prefix'=>'v1', 'middleware'=>'cors'],function(){
      //        return response()->json($cities);
 
      // });
-
    // Route::get('/getbookingcities', 'Scraps\BookingScrapperController@getCityDestinationsInfo');
     //Route::get('/getbookingcitiesdestinies', 'DataSources\BookingDataSourcesController@getAllBookingCitiesDestinies');
 
@@ -47,4 +54,15 @@ Route::group(['prefix'=>'v1', 'middleware'=>'cors'],function(){
     // Route::get('/scrapphantom', 'Scraps\PhantomjsController@scrapPhantom');
     // Route::get('/searchscrapphantom', 'Scraps\PhantomjsController@scrapPhantomBookingSearch');
     // Route::get('/searchscrapcasper', 'Scraps\CasperjsController@scrapCasper'); 
+
+
 });
+
+
+   Route::group(['prefix'=>'v1', 'middleware'=>['cors','auth:api']],function(){
+
+
+         Route::post('/booking', 'Scraps\BookingScrapperController@booking');
+
+
+   });

@@ -100,25 +100,24 @@ class BookingScrapperController extends Controller
 
                                 $cname = $node->filter( '.sr-hotel__name' )->count();
                                 if($cname != '0'){
-                                $name = trim( preg_replace( '/[^;\sa-zA-Z0-9áéíóúüñÁÉÍÓÚÜÑ]+/u', ' ', $node->filter( '.sr-hotel__name' )->text() ) );
+          $name = trim( preg_replace( '/[^;\sa-zA-Z0-9áéíóúüñÁÉÍÓÚÜÑ]+/u', ' ', $node->filter( '.sr-hotel__name' )->text() ) );
                                 }else{
                                     $name = "";
                                 }
 
 
+                                //Booking, dependiendo del tipo de busqueda que se realize, booking arroja los precios en diferentes clases de css, de esta  forma se escrapean la 3 clases acontinuacion.
+                               $cprice = $node->filter( '.totalPrice' )->count();
+                                if($cprice != '0'){
+                                    $signo_peso = '$';
+                                    $precio =preg_replace( '/\n/', ' ', $node->filter( '.totalPrice' )->text());
+                                    $elprecio= explode('COP',$precio);
+                                    $price = $signo_peso.' '.$elprecio[1];
 
-                                // if(){
-                                //     $precio = $node->filter( '.totalPrice' )->text();
-                                //     $elprecio= explode('COP',$precio);
-                                //     $price= $elprecio[1];
-
-                                //   }
-                                //    else{
-                                //     $precio = $node->filter( '.Price' )->text();
-                                //     $elprecio= explode('COP',$precio);
-                                //     $price= $elprecio[1];
-
-                                //  }
+                                }else{
+                                    $price = "";
+                                }
+                               
 
                                 $cprice2 = $node->filter( '.price' )->count();
                                 if($cprice2 != '0'){
@@ -132,21 +131,11 @@ class BookingScrapperController extends Controller
                                 }
 
 
-                                 $cprice = $node->filter( '.totalPrice' )->count();
-                                if($cprice != '0'){
-                                    $signo_peso = '$';
-                                    $precio =preg_replace( '/\n/', ' ', $node->filter( '.totalPrice' )->text());
-                                    $elprecio= explode('COP',$precio);
-                                    $price = $signo_peso.' '.$elprecio[1];
-
-                                }else{
-                                    $price = "";
-                                }
-
+                              
                                    $cprice3 = $node->filter( '.sr_gs_price_total' )->count();
                                 if($cprice3 != '0'){
                                     $signo_peso3 = '$';
-                                    $precio3 = preg_replace( '/\n/', ' ',$node->filter( '.sr_gs_price_total' )->text());
+                                    $precio3 = trim(preg_replace( '/\n/', ' ',$node->filter( '.sr_gs_price_total' )->text()));
                                     $elprecio3= explode('COP',$precio3);
                                     $price3 = $signo_peso3.' '.$elprecio3[1];
 
@@ -179,7 +168,7 @@ class BookingScrapperController extends Controller
 
                                 $cscore = $node->filter( ' a .review-score-badge' )->count();
                                 if($cscore != '0'){
-                                    $score = $node->filter( 'a .review-score-badge')->text();
+                                    $score = trim($node->filter( 'a .review-score-badge')->attr('aria-label'));
                                 }else{
                                     $score = "No posee puntuacion";
                                 }
@@ -197,7 +186,7 @@ class BookingScrapperController extends Controller
 
                                   $ckilometer = $node->filter( '.distfromdest' )->count();
                                 if($ckilometer != '0'){
-                                    $kilometers = preg_replace( '/\n/', ' ', $node->filter( '.distfromdest')->text());
+                                    $kilometers = trim(preg_replace( '/\n/', ' ', $node->filter( '.distfromdest')->text()));
                                 }else{
                                     $kilometers = "";
                                 }
@@ -205,7 +194,7 @@ class BookingScrapperController extends Controller
 
                                    $crecomentation = $node->filter( '.room_link' )->count();
                                 if($crecomentation != '0'){
-                                  $recommendation = preg_replace( '/\n/', ' ',$node->filter( '.room_link')->text());
+                                  $recommendation = trim( preg_replace( '/\n/', ' ',$node->filter( '.room_link')->text()));
                                 }
                                 else{
                                     $recommendation = "";
@@ -213,7 +202,7 @@ class BookingScrapperController extends Controller
 
                                   $cservices = $node->filter( '.sr_room_reinforcement' )->count();
                                 if($cservices != '0'){
-                                  $services = preg_replace( '/\n/', ' ',$node->filter( '.sr_room_reinforcement')->text());
+                                  $services = trim(preg_replace( '/\n/', ' ',$node->filter( '.sr_room_reinforcement')->text()));
                                 }
                                 else{
                                     $services = "";
@@ -273,16 +262,35 @@ class BookingScrapperController extends Controller
     }
 
 
+
+
+
+
+
+
+
+
+
+
+
     public function scrapSearchByhotel(Request $request)
     {
         try{
         $var = $request->json()->all();
 
-     
-                   // $url = 'https://www.booking.com/hotel/co/hostal-buena-onda.es.html?aid=304142;label=gen173nr-1DCAEoggJCAlhYSDNYBGgyiAEBmAEKuAEGyAEM2AED6AEBkgIBeagCAw;sid=ca03b3753db3fc2a0e630f398ad96d08;all_sr_blocks=186068211_100552968_2_0_0;bshb=2;checkin=2018-06-01;checkout=2018-06-02;dest_id=900054926;dest_type=city;dist=0;group_adults=2;hapos=1;highlighted_blocks=186068211_100552968_2_0_0;hpos=1;room1=A%2CA;sb_price_type=total;srepoch=1527526233;srfid=b2d08a285d1982f1c2694eb97c326769f31e7df2X1;srpvid=fb0d766c0a130221;type=total;ucfs=1&#hotelTmpl';
-
+                        
                 $url = $var['url'];
-                $id = $var['id'];
+             // $id = $var['id'];
+
+
+                // $checkin_de_reserva =   trim( preg_replace( '/[^;\sa-zA-Z0-9áéíóúüñÁÉÍÓÚÜÑ]\n+/u', ' ', $url));
+                //  $chekin_de_reserva1 = explode('checkin',$checkin_de_reserva);
+                //    $chekin_de_reserva11 = $chekin_de_reserva1[1];
+                // $chekin_de_reserva111 = explode('=',$chekin_de_reserva11);
+                //  $chekin_de_reserva1111 = $chekin_de_reserva111[1];
+                // $chekin_de_reserva11111 =  explode(';',$chekin_de_reserva1111);
+                // $chekin_de_reserva111111 = $chekin_de_reserva11111[0];
+                // dd($chekin_de_reserva111111);
 
 
                 $crawl = new Client();
@@ -290,7 +298,6 @@ class BookingScrapperController extends Controller
                     'timeout' => 600,
                 ));
                 $crawl->setClient($guzzleClient);
-
                 $crawl->setHeader('Accept', '*/*');
                 $crawl->setHeader('Cache-Control', 'max-age=0');
                 $crawl->setHeader('Connection', 'keep-alive');
@@ -300,11 +307,16 @@ class BookingScrapperController extends Controller
                 $crawl->setHeader('Pragma','');
 
 
+
+
                 $crawler = $crawl->request('GET', $url, [
                     'stream' => true,
                     'read_timeout' => 100,
                 ]);
 
+              
+         
+              
 
                  //Scrap del  id del hotel
                 $hotel_id = $crawler->filter('.hp-lists')->attr('data-hotel-id');
@@ -312,13 +324,16 @@ class BookingScrapperController extends Controller
 
 
                  //Scrap de el nombre del hotel
-               $titulo_Hotel = trim( preg_replace( '/[^;\sa-zA-Z0-9áéíóúüñÁÉÍÓÚÜÑ\n]\n+/u', ' ',  $crawler->filter('.hp__hotel-name')->text()));
+ $titulo_Hotel = trim(preg_replace('/[^;\sa-zA-Z0-9áéíóúüñÁÉÍÓÚÜÑ\n]\n+/u', ' ',$crawler->filter('.hp__hotel-name')->text()));
              
+
+
+
 
                 //Puntuacion HOtel
                  $puntuacion_Hotel =   trim( preg_replace( '/[^;\sa-zA-Z0-9áéíóúüñÁÉÍÓÚÜÑ]\n+/u', ' ',   $crawler->filter('#js--hp-gallery-scorecard')->text()));
                  $puntuacion2= explode('comentarios',$puntuacion_Hotel);
-                  $puntuacion =preg_replace( '/\n/', ' ',$puntuacion2);
+                  $puntuacion = preg_replace( '/\n/', ' ',$puntuacion2);
                 
                
 
@@ -337,28 +352,12 @@ class BookingScrapperController extends Controller
                      ->each(function($fotografia){
                         $nodofotografia = $fotografia->children('a')->extract(array('href')); 
                         return $nodofotografia;
-                      });
-                    }
+                                });
+                            }
                     else{
-                     $imagenes_hotel= $crawler->filter( '#photos_distinct')->children('a')->extract(array('href') ) ;                                     
-                      }
+                     $imagenes_hotel= $crawler->filter( '#photos_distinct')->children('a')->extract(array('href') ) ;      
+                     }
                       
-
-
-                    //   $cimagenes_hotel2= $crawler->filter('.bh-photo-grid-thumbs')->children()->extract(array('href') ) ;
-                    //   if($cimagenes_hotel2 !=0){
-                    //       print_r('Imprime esta monda');
-                    //      //$imagenes_hotel2= $crawler->filter( '.bh-photo-grid-thumbs')->children('a')->extract(array('href') ) ; 
-                    //      }else{
-                    //          $imagenes_hotel2="";
-                    //      }
-               // $imagenes_hotel= $crawler->filter( '')->children('a')->extract(array('href') ) ; 
-
-
-
-
-
-
 
 
 
@@ -373,7 +372,7 @@ class BookingScrapperController extends Controller
 
                         // //scrap de la descripcion completa.    
                 $descripcion_hotel = trim( preg_replace( '/[^;\sa-zA-Z0-9áéíóúüñÁÉÍÓÚÜÑ]\n+/u', ' ',$crawler->filter('#summary')->text()));              
-                 $descripcion_hotel0 = preg_replace( '/\n/', ' ',$descripcion_hotel);
+                 $descripcion_hotel0 = trim(preg_replace( '/\n/', ' ',$descripcion_hotel));
 
 
 
@@ -382,15 +381,13 @@ class BookingScrapperController extends Controller
                          //scrap de los servicios 
                    $servicios_hotel = $crawler->filter('.hp_desc_important_facilities')->filter('div')->children()
                   ->each(function($servicesitems){
-                   return  $listado_de_servicios = preg_replace( '/\n/', ' ', $servicesitems->text());       
+                   return  $listado_de_servicios = trim( preg_replace( '/\n/', ' ', $servicesitems->text()));       
                             });
                 
-                 
-           
+                          
 
                       //scrap de las estrellas del hotel
                     $estrellas = $crawler->filter('.bk-icon-stars')->attr('title');
-
 
 
 
@@ -401,9 +398,9 @@ class BookingScrapperController extends Controller
                   //    $autor_comentario = preg_replace( '/\n/', ' ', $social
                   // // ->filter('.hp-social_proof-quote_author-details')
                   //    ->text());
-                     $listado_comentarios = preg_replace( '/\n/', ' ', $social
+                     $listado_comentarios = trim( preg_replace( '/\n/', ' ', $social
                             ->last()
-                     ->text());    
+                     ->text()));    
                     return $listado_comentarios
                     // .'-'.$autor_comentario
                     ;  
@@ -414,17 +411,13 @@ class BookingScrapperController extends Controller
 
                      //autor de comentarios
                  $comentarios_autor = $crawler->filter('.hp-social-proof-review_score')->filter('div')->filter('.hp-social_proof-quote_author-details')
-                     ->each(function($social){
-        
-                     $listado_autores = preg_replace( '/\n/', ' ', $social
-                            ->last()
-                     ->text());    
-                    return $listado_autores
-                    // .'-'.$autor_comentario
-                    ;  
-                 //  
+                     ->each(function($social){        
+                     $listado_autores = trim(preg_replace( '/\n/', ' ', $social->last()->text()));    
+                    return $listado_autores;                    
                 });
                            
+
+
 
 
 
@@ -432,7 +425,7 @@ class BookingScrapperController extends Controller
                     $nodescount2 = $crawler->filter( '#hp_availability_style_changes .description tbody')->count();
                     if($nodescount2 > 0){
 
-               try{
+                     try{
                     
                      $crawler->filter('#hp_availability_style_changes .description table tbody ')
                      ->each( function ( $node ) use ($titulo_Hotel, $puntuacion, $direccion_hotel, $descripcion_hotel0,$servicios_hotel,$imagenes_hotel
@@ -444,13 +437,13 @@ class BookingScrapperController extends Controller
                         if(!empty($node)){
 
 
-
+                    //Scrap del tipo de Habitacíon
                     $tipo_de_habitacion =   $node->filter('tr')->filter('td')->filter('.hprt-roomtype-link')
                     ->each(function($noderooms) {
-                         $listado_noderroms = preg_replace( '/\n/', ' ', $noderooms->text()); 
-                             $myoptions = explode('Ver', $listado_noderroms);
-                             $misopciones= $myoptions[0];
-                      return  $misopciones;                                             
+                         return $listado_noderroms =  trim( preg_replace( '/\n/', ' ', $noderooms->text())); 
+                              // $myoptions = explode('Ver', $listado_noderroms);
+                              // $misopciones= $myoptions[0];
+                              // $misopciones;                                             
                     });
 
                 
@@ -459,11 +452,19 @@ class BookingScrapperController extends Controller
                     ->each(function($noderooms7){
                        // $listado_noderroms7 = preg_replace( '/\n/', ' ', $noderooms7->text());
                        // return $listado_noderroms7.',';      
-                       return $listado_noderroms7 = $noderooms7->filter('span')->each(function($items){
+                       return $listado_noderroms7 = $noderooms7->filter('.hprt-facilities-facility')->each(function($items){
 
-                             $items_noderooms7 = preg_replace( '/\n/', ' ', $items->text());
+                             $items_noderooms7 =explode('Ver ', trim(preg_replace('/\n/', ' ', $items->text())));
 
-                             return $items_noderooms7;
+                                $options = $items_noderooms7[0];
+
+                                return  $options;
+
+
+                           //         $myoptions = explode('Cancelación', $listado_noderroms4);
+                           // $misopciones= $myoptions[0];
+                           // return $listado_noderroms4;   
+
 
                         });
                    });
@@ -478,10 +479,15 @@ class BookingScrapperController extends Controller
                     //se agrgrefa un mensaje al costado de cada resultado, para definir cual es el ultimo nodo que pertenece a cada tipo de habitacion
                    $precio_de_tipo_habitacion =   $node->filter('tr')->filter('td')->filter('.hprt-price-price')
                     ->each(function($noderooms3){
-                       $listado_noderroms3 =  preg_replace( '/\n/', ' ',$noderooms3->text());
-                       $last_row =  preg_replace( '/\n/', ' ', $noderooms3->parents()->parents()->filter('tr')->filter('.hprt-table-last-row')->filter('td')->filter('.hprt-price-price')->text());
-                         $vacio = 'this is the last Node';
+
+                       $listado_noderroms3 =  trim(preg_replace( '/\n/', ' ',$noderooms3->text()));
+                     
+            $last_row = trim(preg_replace( '/\n/', ' ', $noderooms3->parents()->parents()->filter('tr')->filter('.hprt-table-last-row')->filter('td')->filter('.hprt-price-price')->text()));
+
+
+                         $vacio = 'ultimo nodo';
                          $vacio2 =' ';
+
                       if($listado_noderroms3 === $last_row){
                     return $listado_noderroms3.'-'.$vacio;
                           }else{
@@ -489,22 +495,23 @@ class BookingScrapperController extends Controller
                                  }                      
                    });
 
+
+
+
                         //scrap de ocupacion por tipos de habitacion
                       $ocupacion_de_tipo_habitacion=  $node->filter('tr')->filter('.hprt-occupancy-occupancy-info')
                     ->each(function($noderooms2){
-                       $listado_noderroms2 = preg_replace( '/\n/', ' ', $noderooms2->filter('i')->count());
-                       $multiplicador =  preg_replace( '/\n/', ' ', $noderooms2->text());
+                       $listado_noderroms2 =preg_replace( '/\n/', ' ', $noderooms2->filter('i')->count());
+                       $multiplicador = trim( preg_replace( '/\n/', ' ', $noderooms2->text()));
                        return ($listado_noderroms2.' '.$multiplicador);
-                      
-
-                   });
+                      });
 
 
 
                     //srap de las opciones por tipo de habitacion
                   $condiciones_de_tipo_habitacion =     $node->filter('tr')->filter('td')->filter('.hprt-conditions')
                     ->each(function($noderooms4){
-                       $listado_noderroms4 = preg_replace( '/\n/', ' ', $noderooms4->text());
+                       $listado_noderroms4 = trim( preg_replace( '/\n/', ' ', $noderooms4->text()));
                        $myoptions = explode('Cancelación', $listado_noderroms4);
                        $misopciones= $myoptions[0];
                        return $listado_noderroms4;                    
@@ -515,28 +522,34 @@ class BookingScrapperController extends Controller
                     //scrap de la disponibilidad por el tipo de habitacion, Recordemos que se agrega un mensaje a los ultimos nodos que pertenecen a cada tipo de habitacion
                      $disponibilidad_de_tipo_habitacion =  $node->filter('tr')->filter('td')->filter('.hprt-nos-select')
                     ->each(function($noderooms5){
-                       $listado_noderroms5 =  preg_replace( '/\n/', ' ', $noderooms5->text());
+
+                    return $listado_noderroms5 =   $noderooms5->filter('option')
+                    ->each(function($items){
+                                $items_noderooms5 =  trim(preg_replace( '/\n/', ' ', $items->text()));
+                                return $items_noderooms5;
+                    });                      
+                  });
+
+                 //$last_row =  preg_replace( '/\n/', ' ', $noderooms5->parents()->parents()->filter('tr')->filter('.hprt-table-last-row')->filter('td')->filter('.hprt-nos-select')->each(function($items2){
+
+                     //return $listado_noderroms5b =   $items2->filter('option')
+                     //->each(function($items_compare){
+                     // $items2a = preg_replace( '/\n/', ' ', $items_compare->text());
+                     //  return $items2a;
+                     //              });
+                     //  });
 
 
-                     $last_row =  preg_replace( '/\n/', ' ', $noderooms5->parents()->parents()->filter('tr')->filter('.hprt-table-last-row')->filter('td')->filter('.hprt-nos-select')->text());
-                       $vacio = 'this is the last Node';
-                       $vacio2 =' ';
-                         if($listado_noderroms5 === $last_row){
-                    return $listado_noderroms5.'-'.$vacio;
-                          }else{
-                     return $listado_noderroms5.' '.$vacio2;
-                                 }
-                         });
 
+                     //   $vacio = 'this is the last Node';
+                     //   $vacio2 =' ';
+                     //     if($listado_noderroms5 === $last_row){
+                     // $listado_noderroms5.'-'.$vacio;
+                     //      }else{
+                     // return $listado_noderroms5.' '.$vacio2;
+                     //             }
 
                    
-
-
-
-
-                    
-
-
 
                       if(!in_array($titulo_Hotel, $this->reshotels)){
                        $this->reshotels[] = array(
@@ -548,7 +561,6 @@ class BookingScrapperController extends Controller
                          'descripcion'     => $descripcion_hotel0,
                          'servicios'       => $servicios_hotel,
                          'imagenes'        => $imagenes_hotel,
-                         //'imagenes2'        => $imagenes_hotel2,
                          'Tipo_habitacion' =>  $tipo_de_habitacion,
                          'servicios_por_tipo_habitacion' => $servicios_por_tipo_habitacion,
                          'precio'          =>  $precio_de_tipo_habitacion ,
@@ -561,10 +573,6 @@ class BookingScrapperController extends Controller
                          
                                     );
                              }
-
-
-
-
                     
                                }//END IF CONTADOR del nodro
 
@@ -578,8 +586,6 @@ class BookingScrapperController extends Controller
                    else{
                     return response()->json("No existen nodos");
                 }
-
-
            
                $result = $this->reshotels;
 
@@ -599,15 +605,12 @@ class BookingScrapperController extends Controller
                 // "opciones"                       => $result['0']['puntuacion'],
                 // "disponibilidad"                 => $result['0']['puntuacion'],
                 // "created_at"                     => Carbon::now(),
-                // "updated_at"                     => Carbon::now(),
-     
+                // "updated_at"                     => Carbon::now(),     
 
                 // ]);
                
                 
                return response()->json(['data'=>$result], 200);
-
-
 
            }  catch(\Exception $e){
             return  $e;
@@ -620,7 +623,7 @@ class BookingScrapperController extends Controller
      //funcion para recuperar la información de las ciudades 
       public function autocomplete(Request $request)
      {
-        $data = [];
+       $data = [];
        if($request->has('q')){
            $search = $request->q;
            $data = DB::table("cities")
@@ -635,21 +638,23 @@ class BookingScrapperController extends Controller
 
 
    public function allcity(){
-
            $data = [];
-
            $data = DB::table("cities")->get(); 
-
            return response()->json($data);
    }
 
 
-   public function reservashotelerasendpoints(){
+   public function booking(Request $request){
 
 
+         $var = $request->json()->all();
+
+            return response()->json([
+                'data' => $var
+            ]);
 
 
-   }
+     }
           
 
      

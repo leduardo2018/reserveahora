@@ -11,9 +11,9 @@
 |
 */
 
-Route::get('/', function () {
-    return redirect('/login');
-});
+// Route::get('/', function () {
+//     return redirect('/login');
+// });
 
 Route::get('/scraping', 'ScrapingController@example');
 Route::get('/scrapinghotel', 'Scraps\BookingScrapperController@scrapSearchByhotel');
@@ -23,6 +23,6 @@ Route::get('/cities',       'ScrapingController@autocomplete');
 
 
 
-Auth::routes();
+// Auth::routes();
 
 Route::get('/home', 'HomeController@index')->name('home');
