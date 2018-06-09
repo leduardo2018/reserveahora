@@ -33,7 +33,7 @@
                    return {
                     
                        text: item.city,
-                       id: item.id,
+                       id: item.id
                        
                    }
                })
