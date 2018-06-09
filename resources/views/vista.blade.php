@@ -34,7 +34,7 @@
                     
                        text: item.city,
                        id: item.id,
-                       text:item.id
+                       
                    }
                })
            };
