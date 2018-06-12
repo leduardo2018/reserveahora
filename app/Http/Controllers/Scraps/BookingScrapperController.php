@@ -673,9 +673,15 @@ class BookingScrapperController extends Controller
 
        public function booking(Request $request){
 
- $var = $request->json()->all();
+         $var = $request->json()->all();
 
- $noches = substr($var['checkout'],8,2)- substr($var['checkin'],8,2);
+         $noches = substr($var['checkout'],8,2)- substr($var['checkin'],8,2);
+          
+         $precio_con_cop = explode('COP', $var['precio']);
+         $precio =  trim($precio_con_cop[1]);
+   
+
+
 
            // dd($noches);
 
@@ -689,7 +695,7 @@ class BookingScrapperController extends Controller
         "checkout"                       => $var['checkout'],
         "noches"                         => $noches,
         "tipo_habitacion"                => $var['tipo_habitacion'],
-        "precio"                         => $var['precio'],
+        "precio"                         => $precio,
         "email"                          => $var['email'],
         "nombre"                         => $var['nombre'],
         "telefono"                       => $var['telefono'],
