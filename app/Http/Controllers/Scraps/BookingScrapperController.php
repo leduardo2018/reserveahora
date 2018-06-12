@@ -280,17 +280,7 @@ class BookingScrapperController extends Controller
 
                         
                 $url = $var['url'];
-             // $id = $var['id'];
-
-
-                // $checkin_de_reserva =   trim( preg_replace( '/[^;\sa-zA-Z0-9áéíóúüñÁÉÍÓÚÜÑ]\n+/u', ' ', $url));
-                //  $chekin_de_reserva1 = explode('checkin',$checkin_de_reserva);
-                //    $chekin_de_reserva11 = $chekin_de_reserva1[1];
-                // $chekin_de_reserva111 = explode('=',$chekin_de_reserva11);
-                //  $chekin_de_reserva1111 = $chekin_de_reserva111[1];
-                // $chekin_de_reserva11111 =  explode(';',$chekin_de_reserva1111);
-                // $chekin_de_reserva111111 = $chekin_de_reserva11111[0];
-                // dd($chekin_de_reserva111111);
+             // $id = $var['id'];           
 
 
                 $crawl = new Client();
@@ -315,7 +305,9 @@ class BookingScrapperController extends Controller
                 ]);
 
               
-         
+                return response()->json($url);
+
+                die();
               
 
                  //Scrap del  id del hotel
@@ -324,16 +316,16 @@ class BookingScrapperController extends Controller
 
 
                  //Scrap de el nombre del hotel
- $titulo_Hotel = trim(preg_replace('/[^;\sa-zA-Z0-9áéíóúüñÁÉÍÓÚÜÑ\n]\n+/u', ' ',$crawler->filter('.hp__hotel-name')->text()));
+                $titulo_Hotel = trim(preg_replace('/[^;\sa-zA-Z0-9áéíóúüñÁÉÍÓÚÜÑ\n]\n+/u', ' ',$crawler->filter('.hp__hotel-name')->text()));
              
 
 
 
 
                 //Puntuacion HOtel
-                 $puntuacion_Hotel =   trim( preg_replace( '/[^;\sa-zA-Z0-9áéíóúüñÁÉÍÓÚÜÑ]\n+/u', ' ',   $crawler->filter('#js--hp-gallery-scorecard')->text()));
-                 $puntuacion2= explode('comentarios',$puntuacion_Hotel);
-                  $puntuacion = preg_replace( '/\n/', ' ',$puntuacion2);
+                $puntuacion_Hotel =   trim( preg_replace( '/[^;\sa-zA-Z0-9áéíóúüñÁÉÍÓÚÜÑ]\n+/u', ' ',   $crawler->filter('#js--hp-gallery-scorecard')->text()));
+                $puntuacion2= explode('comentarios',$puntuacion_Hotel);
+                $puntuacion = preg_replace( '/\n/', ' ',$puntuacion2);
                 
                
 
@@ -379,8 +371,9 @@ class BookingScrapperController extends Controller
 
 
                          //scrap de los servicios 
-                   $servicios_hotel = $crawler->filter('.hp_desc_important_facilities')->filter('div')->children()
+                   $servicios_hotel = $crawler->filter('.facilitiesChecklistSection ')->filter('li')
                   ->each(function($servicesitems){
+
                    return  $listado_de_servicios = trim( preg_replace( '/\n/', ' ', $servicesitems->text()));       
                             });
                 
@@ -418,6 +411,27 @@ class BookingScrapperController extends Controller
                            
 
 
+                //Checkin de reserva
+                 $checkin_de_reserva =   trim( preg_replace( '/[^;\sa-zA-Z0-9áéíóúüñÁÉÍÓÚÜÑ]\n+/u', ' ', $url));
+                 $chekin_de_reserva1 = explode('checkin',$checkin_de_reserva);
+                 $chekin_de_reserva11 = $chekin_de_reserva1[1];
+                 $chekin_de_reserva111 = explode('=',$chekin_de_reserva11);
+                 $chekin_de_reserva1111 = $chekin_de_reserva111[1];
+                 $chekin_de_reserva11111 =  explode('&',$chekin_de_reserva1111);
+                 $chekin_de_reserva111111 = $chekin_de_reserva11111[0];
+                 $chekin_de_reserva111111;
+
+
+                //Ckeckout de reserva
+                $checkout_de_reserva =   trim( preg_replace( '/[^;\sa-zA-Z0-9áéíóúüñÁÉÍÓÚÜÑ]\n+/u', ' ', $url));
+                $checkout_de_reserva1 = explode('checkout',$checkout_de_reserva);
+                $checkout_de_reserva11 = $checkout_de_reserva1[1];
+                $checkout_de_reserva111 = explode('=',$checkout_de_reserva11);
+                $checkout_de_reserva1111 = $checkout_de_reserva111[1];
+                $checkout_de_reserva11111 =  explode('&',$checkout_de_reserva1111);
+                $checkout_de_reserva111111 = $checkout_de_reserva11111[0];              
+                $checkout_de_reserva111111;
+
 
 
 
@@ -433,6 +447,8 @@ class BookingScrapperController extends Controller
                      ,$hotel_id,$estrellas
                         ,$comentarios_hotel
                         ,$comentarios_autor
+                        ,$chekin_de_reserva111111
+                        ,$checkout_de_reserva111111
                      ) {
                         if(!empty($node)){
 
@@ -553,19 +569,21 @@ class BookingScrapperController extends Controller
 
                       if(!in_array($titulo_Hotel, $this->reshotels)){
                        $this->reshotels[] = array(
-                         'hotel_id'        => $hotel_id,
-                         'Nombre_hotel'    => $titulo_Hotel,
+                         'hotel_id'        =>  $hotel_id,
+                         'Nombre_hotel'    =>  $titulo_Hotel,
                           'estrellas'       => $estrellas,
-                         'puntuacion'      => $puntuacion[1],
-                         'direccion'       => $direccion_hotel,
-                         'descripcion'     => $descripcion_hotel0,
-                         'servicios'       => $servicios_hotel,
-                         'imagenes'        => $imagenes_hotel,
+                         'puntuacion'      =>  $puntuacion[1],
+                         'direccion'       =>  $direccion_hotel,
+                         'descripcion'     =>  $descripcion_hotel0,
+                         'servicios'       =>  $servicios_hotel,
+                         'imagenes'        =>  $imagenes_hotel,
+                         'checkin'         =>  $chekin_de_reserva111111,
+                         'checkout'        =>  $checkout_de_reserva111111,
                          'Tipo_habitacion' =>  $tipo_de_habitacion,
                          'servicios_por_tipo_habitacion' => $servicios_por_tipo_habitacion,
-                         'precio'          =>  $precio_de_tipo_habitacion ,
-                         'Ocupacion'       =>  $ocupacion_de_tipo_habitacion ,
-                         'opciones'        =>  $condiciones_de_tipo_habitacion ,
+                         'precio'          =>  $precio_de_tipo_habitacion,
+                         'Ocupacion'       =>  $ocupacion_de_tipo_habitacion,
+                         'opciones'        =>  $condiciones_de_tipo_habitacion,
                          'disponibilidad'  =>  $disponibilidad_de_tipo_habitacion,
                          'comentarios'     =>  $comentarios_hotel,
                          'autor'           =>  $comentarios_autor
@@ -644,15 +662,46 @@ class BookingScrapperController extends Controller
    }
 
 
-   public function booking(Request $request){
+   public function book(Request $request){
 
-
-         $var = $request->json()->all();
-
+           $var = $request->json()->all();
             return response()->json([
                 'data' => $var
             ]);
+     }
 
+
+       public function booking(Request $request){
+
+ $var = $request->json()->all();
+
+ $noches = substr($var['checkout'],8,2)- substr($var['checkin'],8,2);
+
+           // dd($noches);
+
+             DB::table('bookingdetails')->insert([
+
+        "hotel_id"                       => $var['hotel_id'],
+        "nombre_hotel"                   => $var['nombre_hotel'],
+        "direccion"                      => $var['direccion'],
+        "descripcion"                    => $var['descripcion'],
+        "checkin"                        => $var['checkin'],
+        "checkout"                       => $var['checkout'],
+        "noches"                         => $noches,
+        "tipo_habitacion"                => $var['tipo_habitacion'],
+        "precio"                         => $var['precio'],
+        "email"                          => $var['email'],
+        "nombre"                         => $var['nombre'],
+        "telefono"                       => $var['telefono'],
+        "nombre_huesped"                 => $var['nombre_huesped'],
+        "created_at"                     => Carbon::now(),
+        "updated_at"                     => Carbon::now(),     
+
+                ]);
+
+
+
+            return response()->json('reservacion guardada');
 
      }
           

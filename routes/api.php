@@ -59,10 +59,13 @@ Route::group(['prefix'=>'v1', 'middleware'=>'cors'],function(){
 });
 
 
-   Route::group(['prefix'=>'v1', 'middleware'=>['cors','auth:api']],function(){
+   Route::group(['prefix'=>'v1'
+    // , 'middleware'=>['cors','auth:api']
+],function(){
 
 
-         Route::post('/booking', 'Scraps\BookingScrapperController@booking');
+         Route::post('/book', 'Scraps\BookingScrapperController@book');
+           Route::post('/booking', 'Scraps\BookingScrapperController@booking');
 
 
    });
