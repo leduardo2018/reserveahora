@@ -24,7 +24,7 @@
      $('.itemName').select2({
        placeholder: 'Selecciona ciudad',
        ajax: {
-         url: 'https://9f93d9e9.ngrok.io/api/v1/cities',
+         url: 'https://reserveahora.herokuapp.com/api/v1/cities',
          dataType: 'json',
          delay: 250,
          processResults: function (data) {
@@ -33,8 +33,8 @@
                    return {
                     
                        text: item.city,
-                       id: item.id,
-                       text:item.id
+                       id: item.id
+                       
                    }
                })
            };
