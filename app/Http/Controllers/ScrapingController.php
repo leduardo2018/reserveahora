@@ -7,6 +7,7 @@ use Goutte\Client;
 use Illuminate\Http\Request;
 use App\City;
 use DB;
+use Carbon\Carbon;
 
 class ScrapingController extends Controller
 {
@@ -36,6 +37,7 @@ class ScrapingController extends Controller
 
         return view('vista');
     }
+
 
 
       public function autocomplete(Request $request)
@@ -70,6 +72,53 @@ class ScrapingController extends Controller
 
    }
 
+   public function infopayu(){
+      return view('pago.infopayu');
+   }
 
+
+
+     public function booking(Request $request){
+
+         $var = $request->all();
+
+        
+
+         $noches = substr($var['checkout'],8,2)- substr($var['checkin'],8,2);
+          
+         $precio_con_cop = explode('COP', $var['precio']);
+         $precio =  trim($precio_con_cop[1]);
+   
+
+           // dd($noches);
+
+             DB::table('bookingdetails')->insert([
+
+        "hotel_id"                       => $var['hotel_id'],
+        "nombre_hotel"                   => $var['nombre_hotel'],
+        "direccion"                      => $var['direccion'],
+        "descripcion"                    => $var['descripcion'],
+        "checkin"                        => $var['checkin'],
+        "checkout"                       => $var['checkout'],
+        "noches"                         => $noches,
+        "tipo_habitacion"                => $var['tipo_habitacion'],
+        "precio"                         => $precio,
+        "email"                          => $var['email'],
+        "nombre"                         => $var['nombre'],
+        "telefono"                       => $var['telefono'],
+        "nombre_huesped"                 => $var['nombre_huesped'],
+        "created_at"                     => Carbon::now(),
+        "updated_at"                     => Carbon::now(),     
+
+                ]);
+
+
+
+            //return response()->json('reservacion guardada');
+
+            return view('pago.formpayu');
+
+     }
+          
 
 }

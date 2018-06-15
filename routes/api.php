@@ -64,7 +64,7 @@ Route::group(['prefix'=>'v1', 'middleware'=>'cors'],function(){
 ],function(){
 
 
-         Route::post('/book', 'Scraps\BookingScrapperController@book');
+           Route::post('/book', 'Scraps\BookingScrapperController@book');
            Route::post('/booking', 'Scraps\BookingScrapperController@booking');
 
 
