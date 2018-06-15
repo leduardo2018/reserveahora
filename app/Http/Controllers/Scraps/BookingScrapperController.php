@@ -82,7 +82,7 @@ class BookingScrapperController extends Controller
                 ? $crawler->filter('.results-paging .x-list li:nth-last-child(2)')->text()
                 : 0);
 
-            for ($i = 0; $i <1; $i++) {
+            for ($i = 0; $i <2; $i++) {
                 if ( $i != 0 ) {    
                     $p = $i * 15;
                     $crawler = $crawl->request('GET', $url.$endpoint.http_build_query($data).'&rows=15&offset='.$p,
